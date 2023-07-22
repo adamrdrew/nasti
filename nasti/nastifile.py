@@ -49,8 +49,8 @@ class NastiFile:
 
     def __set_path(self, path):
         if not path:
-            path = 'nasti.yaml'
-        self.path = path
+            path = './nasti.yaml'
+        self.path = f"{path}/nasti.yaml"
 
 
     def __verify_exists(self):

@@ -56,7 +56,7 @@ class Nasti:
     def __load_nasti_file(self):
         if not self.handler:
             raise Exception("Error: No source handler found.")
-        self.nasti_file = NastiFile(self.output_dir + '/nasti.yaml')
+        self.nasti_file = NastiFile(self.output_dir)
         self.nasti_file.load()
 
     def __get_source(self):
