@@ -34,7 +34,7 @@ class Nasti:
 
     def __git_init(self):
         if self.git_init:
-            os.system(f"cd {self.output_dir} && git init && git add . && git commit -am 'Initial commit'")
+            os.system(f"cd {self.output_dir} && git init && git add -A && git commit -am 'Initial commit'")
 
 
     def __create_output_dir(self):

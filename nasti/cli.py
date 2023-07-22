@@ -15,10 +15,10 @@ def cli():
 
 @click.command()
 @click.argument("source", required=True)
-@click.option("--git-init", "-g", help="Create a git repo in the new project. Default is True.", is_flag=True, default=False)
-def process(source, git_init):
+@click.option("--git", "-g", help="Create a git repo in the new project. Default is True.", default=False)
+def process(source, git):
     try:
-        nasti = Nasti(source, click.echo, git_init)
+        nasti = Nasti(source, click.echo, git)
         nasti.run()
     except Exception as e:
         print(e)
@@ -27,7 +27,6 @@ def process(source, git_init):
 
 @click.command()
 @click.argument("path", required=False)
-
 def validate(path):
     if not path:
         path = "."
