@@ -37,7 +37,10 @@ class Mutation:
         if self.help:
             print(self.help)
         user_input = self.__get_user_input()
-        self.__replace_text_in_files(user_input)
+        try:
+            self.__replace_text_in_files(user_input)
+        except Exception as e:
+            raise Exception(f"Error: Unable to replace text in files: {e}")
 
     def __get_user_input(self):
         user_input = input(f"{self.prompt}> ")
