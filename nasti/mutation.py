@@ -18,7 +18,7 @@ class Mutation:
             self.replace     = mutation_config["replace"]
             self.files       = mutation_config["files"]
         except Exception as e:
-            raise Exception(f"Error: Invalid mutation config: {mutation_config} missing {e}")
+            raise Exception(f"Error: Invalid mutation config: {mutation_config} required field missing missing {e}")
         # Optional fields
         if "help" in mutation_config:
             self.help        = mutation_config["help"]
@@ -36,8 +36,11 @@ class Mutation:
         # Prompt the user for input
         if self.help:
             print(self.help)
+        user_input = self.__get_user_input()
+        self.__replace_text_in_files(user_input)
+
+    def __get_user_input(self):
         user_input = input(f"{self.prompt}> ")
-        # Validate the input
         tries = 0
         max_tries = 3
         while True:
@@ -46,9 +49,20 @@ class Mutation:
                 raise Exception(f"Error: Too many invalid inputs.")
             if self.__is_input_valid(user_input):
                 break
-            user_input = input(f"{self.prompt}> ")
             print(f"Invalid input.")
-                
+            user_input = input(f"{self.prompt}> ")
+        return user_input
+
+    def __replace_text_in_files(self, user_input):
+        # Replace the text in the files
+        for file in self.files:
+            file_with_path = self.__get_file_full_path(file)
+            with open(file_with_path, 'r') as f:
+                file_text = f.read()
+            file_text = file_text.replace(self.replace, user_input)
+            with open(file_with_path, 'w') as f:
+                f.write(file_text)
+    
     def __is_input_valid(self, input):
         # If there is no validation, the input is valid
         if not self.validation:
