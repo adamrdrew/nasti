@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 from nasti.source_handlers import SourceHandlerResolver
 from nasti.nastifile import NastiFile
@@ -34,7 +35,8 @@ class Nasti:
 
     def __git_init(self):
         if self.git_init:
-            os.system(f"cd {self.output_dir} && git init && git add -A && git commit -am 'Initial commit'")
+            with open(os.devnull, 'w') as devnull:
+                return subprocess.run(f"cd {self.output_dir} && git init && git add -A && git commit -am 'Initial commit'", stdout=devnull, stderr=devnull, shell=True)
 
 
     def __create_output_dir(self):

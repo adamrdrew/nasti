@@ -15,7 +15,7 @@ def cli():
 
 @click.command()
 @click.argument("source", required=True)
-@click.option("--git", "-g", help="Create a git repo in the new project. Default is True.", default=False)
+@click.option("--git", "-g", help="Create a git repo in the new project. Default is True.", is_flag=True)
 def process(source, git):
     try:
         nasti = Nasti(source, click.echo, git)
