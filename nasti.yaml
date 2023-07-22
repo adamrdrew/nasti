@@ -1,0 +1,46 @@
+---
+mutations:
+  - name: "api_path"
+    prompt: "ClowdApp api_path"
+    help: "The api_path is the root of your api. For example, if your api_path is cool_app then your API will start at /api/cool_app"
+    replace: "starter-app-api"
+    files:
+      - "local_config.json"
+      - "deploy/clowdapp.yaml"
+      - "main.go"
+      - "routes/api.go"
+    validations:
+      - ^[a-z_\-]+$
+      
+  - name: "email"
+    prompt: "Contact Email"
+    help: "The contact email is used for the contact email in the swagger docs"
+    replace: "addrew@redhat.com"
+    files:
+      - "main.go"
+    validations:
+      - ^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
+
+  - name: "quay"
+    prompt: "Quay Repo"
+    help: "The quay repo is the location of your container image. Should be in the form of quay.io/username/repo"
+    replace: "quay.io/rh_ee_addrew/consoledot-go-starter-app"
+    files:
+      - "Makefile"
+    validations:
+      - ^quay\.io/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$
+
+  - name: "github"
+    prompt: "Github Repo"
+    help: "The github repo is the location of your github repo. Should be in the form of github.com/user_or_org/repo"
+    replace: "github.com/RedHatInsights/consoledot-go-starter-app"
+    files:
+      - "go.mod"
+      - "providers/database/main.go"
+      - "routes/api.go"
+      - "routes/main.go"
+      - "routes/probes.go"
+      - "main.go"
+      - "main_test.go" 
+    validations:
+      - ^github\.com/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$
