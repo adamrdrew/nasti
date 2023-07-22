@@ -27,8 +27,10 @@ def process(source):
 @click.command()
 @click.argument("path", required=False)
 def validate(path):
+    if not path:
+        path = "."
     try:
-        nasti_file = NastiFile(path)
+        nasti_file = NastiFile(f"{path}/nasti.yaml")
         nasti_file.validate()
         click.echo("Nastifile is valid.")
     except Exception as e:

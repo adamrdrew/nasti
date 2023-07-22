@@ -47,9 +47,9 @@ mutations:
       - "routes/probes.go"
       - "main.go"
       - "main_test.go" 
-    # That validation regex that will be applied to the user's input
-    validations:
-      - ^github\.com/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$
+    # Optional validation. You can specify a regex or one of the pre-built validations
+    validation:
+      regex: ^github\.com/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$
 ```
 
 The mutation format is very simple, and you can add as many mutations as you'd like. Most of the keys are required; `validations` and `help` are optional, but strongly encouraged.
