@@ -4,11 +4,12 @@ from nasti.source_handlers import SourceHandlerResolver
 from nasti.nastifile import NastiFile
 
 class Nasti:
-    def __init__(self, source, print_func=print):
+    def __init__(self, source, print_func=print, git_init=True):
         self.source = source
         self.handler = None
         self.print_func = print_func
         self.output_dir = ""
+        self.git_init = git_init
 
     def run(self):
         try:
@@ -19,6 +20,7 @@ class Nasti:
             self.nasti_file.validate()
             self.nasti_file.run()
             self.__clean_up()
+            self.__git_init()
         except Exception as e:
             self.handler.clean_up()
             self.__delete_output_dir()
@@ -27,6 +29,13 @@ class Nasti:
     def __clean_up(self):
         #delete the nastifile
         os.system(f"rm {self.output_dir}/nasti.yaml")
+        # delete the git repo
+        os.system(f"rm -rf {self.output_dir}/.git")
+
+    def __git_init(self):
+        if self.git_init:
+            os.system(f"cd {self.output_dir} && git init && git add . && git commit -am 'Initial commit'")
+
 
     def __create_output_dir(self):
         attemps = 0
