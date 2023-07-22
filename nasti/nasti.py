@@ -18,10 +18,15 @@ class Nasti:
             self.__load_nasti_file()
             self.nasti_file.validate()
             self.nasti_file.run()
+            self.__clean_up()
         except Exception as e:
             self.handler.clean_up()
             self.__delete_output_dir()
             raise e
+
+    def __clean_up(self):
+        #delete the nastifile
+        os.system(f"rm {self.output_dir}/nasti.yaml")
 
     def __create_output_dir(self):
         attemps = 0

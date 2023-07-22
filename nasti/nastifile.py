@@ -29,9 +29,16 @@ class NastiFile:
         working_dir = self.get_dir()
         # verify each mutation is valid
         for mutation_config in self.config["mutations"]:
+            self.__validate_mutation_config_keys(mutation_config)
             mutation = Mutation(mutation_config, working_dir)
             mutation.validate()
-    
+
+    def __validate_mutation_config_keys(self, mutation_config):
+        valid_keys = ["name", "prompt", "replace", "files", "help", "validation"]
+        for key in mutation_config:
+            if not key in valid_keys:
+                raise Exception(f"Error: Invalid key in mutation config: {key}")
+
     def run(self):
         self.load()
         working_dir = self.get_dir()
