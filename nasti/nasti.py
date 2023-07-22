@@ -1,28 +1,61 @@
-from nasti.grabbers import GrabberResolver
+import os
+
+from nasti.source_handlers import SourceHandlerResolver
 from nasti.nastifile import NastiFile
 
 class Nasti:
-    def __init__(self, source):
+    def __init__(self, source, print_func=print):
         self.source = source
+        self.handler = None
+        self.print_func = print_func
+        self.output_dir = ""
 
     def run(self):
-        # resolve our source input
         try:
-            self.get_source()
-            self.load_nasti_file()
-        except:
-            self.grabber.clean_up()
-            raise
+            self.__get_source()
+            self.__create_output_dir()
+            self.__copy_source_files()
+            self.__load_nasti_file()
+            self.nasti_file.validate()
+            self.nasti_file.run()
+        except Exception as e:
+            self.handler.clean_up()
+            self.__delete_output_dir()
+            raise e
 
-    def load_nasti_file(self):
-        self.nasti_file = NastiFile(self.grabber.source_dir + '/nasti.yaml')
+    def __create_output_dir(self):
+        attemps = 0
+        max_attempts = 3
+        while True:
+            self.output_dir = input("Enter an output directory name: ")
+            try:
+                # Attempt to create the directory
+                os.makedirs(self.output_dir)
+                self.print_func(f"Directory '{self.output_dir}' created successfully.")
+                break
+            except OSError as e:
+                # Handle error if directory creation fails
+                self.print_func(f"Error: {e}")
+                self.print_func("Please check the directory name and try again.")
+                attemps += 1
+                if attemps >= max_attempts:
+                    raise Exception("Error: Something really weird is up. ")
+
+    def __delete_output_dir(self):
+        os.system(f"rm -rf {self.output_dir}")
+
+    def __copy_source_files(self):
+        # Copy the files from the source to the output dir
+        os.system(f"cp -r {self.handler.source_dir}/* {self.output_dir}")
+
+    def __load_nasti_file(self):
+        if not self.handler:
+            raise Exception("Error: No source handler found.")
+        self.nasti_file = NastiFile(self.output_dir + '/nasti.yaml')
         self.nasti_file.load()
 
-    # resolve our source input
-    # ensure that there's a local directory with our source in it
-    # if the soure is a git repo, clone it
-    # if the source is a local directory, use it
-    def get_source(self):
-        resolver = GrabberResolver(self.source)
-        self.grabber = resolver.resolve()
-        self.grabber.grab()
+    def __get_source(self):
+        resolver = SourceHandlerResolver(self.source)
+        self.handler = resolver.resolve()
+        self.handler.run()
+

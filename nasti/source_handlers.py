@@ -1,13 +1,26 @@
 import os
-import sys
+import click
 import uuid
 
-class GitGrabber:
+# SourceHandlerResolver finds the correct source handler for the source input and returns it
+# If no source is provided, it returns the help handler
+class SourceHandlerResolver:
+    def __init__(self, source):
+        self.source = source
+
+    def resolve(self):
+        if not self.source or self.source.lower() == 'help':
+            return HelpHandler(self.source)
+        if self.source.startswith('git@'):
+            return GitHandler(self.source)
+        return LocalDirectoryHandler(self.source)
+
+class GitHandler:
     source_dir = ""
     def __init__(self, source):
         self.source = source
 
-    def grab(self):
+    def run(self):
         self.__validate_git()
         self.__create_tmp_dir()
         self.__clone_repo()
@@ -41,12 +54,12 @@ class GitGrabber:
         if retval != 0:
             raise Exception("Error: Unable to clone git repo.")
 
-class LocalDirectoryGrabber:
+class LocalDirectoryHandler:
     source_dir = ""
     def __init__(self, source):
         self.source = source
     
-    def grab(self):
+    def run(self):
         self.__validate_source_dir()
         self.source_dir = self.source
 
@@ -57,24 +70,14 @@ class LocalDirectoryGrabber:
         if not os.path.isdir(self.source):
             raise Exception("Error: " + self.source + " is not a directory.")
 
-class NullGrabber:
+class HelpHandler:
     source_dir = ""
     def __init__(self, source):
         self.source = source
 
-    def grab(self):
+    def run(self):
         click.echo(click.get_current_context().get_help())
 
     def clean_up(self):
         pass
 
-class GrabberResolver:
-    def __init__(self, source):
-        self.source = source
-
-    def resolve(self):
-        if not self.source or self.source.lower() == 'help':
-            return NullGrabber(self.source)
-        if self.source.startswith('git@'):
-            return GitGrabber(self.source)
-        return LocalDirectoryGrabber(self.source)

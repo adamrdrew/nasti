@@ -31,6 +31,14 @@ class NastiFile:
         for mutation_config in self.config["mutations"]:
             mutation = Mutation(mutation_config, working_dir)
             mutation.validate()
+    
+    def run(self):
+        self.load()
+        working_dir = self.get_dir()
+        for mutation_config in self.config["mutations"]:
+            print()
+            mutation = Mutation(mutation_config, working_dir)
+            mutation.run()
 
     def __set_path(self, path):
         if not path:

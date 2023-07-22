@@ -9,8 +9,8 @@ mutations:
       - "deploy/clowdapp.yaml"
       - "main.go"
       - "routes/api.go"
-    validations:
-      - ^[a-z_\-]+$
+    validation: 
+      kind: slug
       
   - name: "email"
     prompt: "Contact Email"
@@ -18,8 +18,8 @@ mutations:
     replace: "addrew@redhat.com"
     files:
       - "main.go"
-    validations:
-      - ^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
+    validation: 
+      kind: email
 
   - name: "quay"
     prompt: "Quay Repo"
@@ -27,8 +27,8 @@ mutations:
     replace: "quay.io/rh_ee_addrew/consoledot-go-starter-app"
     files:
       - "Makefile"
-    validations:
-      - ^quay\.io/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$
+    validation: 
+      regex: ^quay\.io/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$
 
   - name: "github"
     prompt: "Github Repo"
@@ -42,5 +42,5 @@ mutations:
       - "routes/probes.go"
       - "main.go"
       - "main_test.go" 
-    validations:
-      - ^github\.com/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$
+    validation: 
+      regex: ^github\.com/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$

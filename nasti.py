@@ -1,42 +1,4 @@
-import click
-import sys
-
-from nasti.nastifile import NastiFile
-from nasti.nasti import Nasti
-
-@click.group()
-def cli():
-    """
-    Welcome to NASTI!
-
-    NASTI is free and open source software. Feel free to get weird with it!
-    """
-    pass
-
-@click.command()
-@click.argument("source", required=True)
-def process(source):
-    try:
-        nasti = Nasti(source)
-        nasti.run()
-    except Exception as e:
-        print(e)
-        sys.exit(1)
-
-
-@click.command()
-@click.argument("path", required=False)
-def validate(path):
-    try:
-        nasti_file = NastiFile(path)
-        nasti_file.validate()
-        click.echo("Nasti file is valid.")
-    except Exception as e:
-        print(e)
-        sys.exit(1)
-
-cli.add_command(process)
-cli.add_command(validate)
+from nasti.cli import cli
 
 if __name__ == "__main__":
     cli()
