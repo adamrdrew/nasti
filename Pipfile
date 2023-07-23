@@ -9,8 +9,8 @@ pyyaml = "*"
 validators = "*"
 pytest = "*"
 coverage = "*"
-
-[dev-packages]
+pipenv-setup = "*"
+vistir = "0.6.1"
 
 [requires]
 python_version = "3.11"
