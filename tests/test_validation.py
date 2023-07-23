@@ -1,5 +1,6 @@
 from nasti.validation import Validation
 import unittest
+import nasti.exceptions as exceptions
 
 class TestValidation(unittest.TestCase):
     def test_valid_regex(self):
@@ -14,12 +15,19 @@ class TestValidation(unittest.TestCase):
         })
         assert validation.validate("867-5309") == False
     
-    def test_invalid_config(self):
-        with self.assertRaises(Exception):
+    def test_missing_config(self):
+        with self.assertRaises(exceptions.ValidationConfigMissingException):
             validation = Validation({
                 "invalid": "invalid",
             })
-    
+
+    def test_invalid_config(self):
+        with self.assertRaises(exceptions.ValidationConfigInvalidException):
+            validation = Validation({
+                "regex": r'^[A-Za-z\s]+$',
+                "kind": "slug"
+            })
+
     def test_valid_kind(self):
         validation = Validation({
             "kind": "slug",
@@ -33,7 +41,7 @@ class TestValidation(unittest.TestCase):
         assert validation.validate("Tonight, the south is on fire!") == False
     
     def test_unknown_kind(self):
-        with self.assertRaises(Exception):
+        with self.assertRaises(exceptions.ValidationUnknownKindException):
             validation = Validation({
                 "kind": "ire_works",
             })

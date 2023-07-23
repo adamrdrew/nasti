@@ -1,6 +1,6 @@
 import os
-import click
 import uuid
+import nasti.exceptions as exceptions
 
 # SourceHandlerResolver finds the correct source handler for the source input and returns it
 # If no source is provided, it returns the help handler
@@ -29,9 +29,9 @@ class GitHandler:
         self.os_dep = os_dep
 
     def run(self):
-        self.__validate_git()
+        self.validate_git()
         self.__create_tmp_dir()
-        self.__clone_repo()
+        self.clone_repo()
 
     def clean_up(self):
         self.os_dep.system('rm -rf ' + self.source_dir)
@@ -39,9 +39,14 @@ class GitHandler:
     def __command_exists(self, command):
         return self.os_dep.system("which " + command + " > /dev/null") == 0
 
-    def __validate_git(self):
+    # I wouldn't normally make these methods public
+    # but it aids in testing these methods
+    def validate_git(self):
         if not self.__command_exists('git'):
-            raise Exception("Error: git is not installed.")
+            raise exceptions.GitHandlerGitMissingException("Error: git is not installed.")
+    def clone_repo(self):
+        if self.os_dep.system('git clone ' + self.source + ' ' + self.source_dir) != 0:
+            raise exceptions.GitHandlerCloneException("Error: Unable to clone git repo.")
 
     def __create_tmp_dir(self):
         tmp_dir_path = self.TMP_DIR
@@ -49,17 +54,13 @@ class GitHandler:
             try:
                 self.os_dep.mkdir(tmp_dir_path)
             except:
-                raise Exception("Error: Unable to create tmp directory.")
+                raise exceptions.GitHandlerTmpDirCreationException("Error: Unable to create tmp directory.")
         random_dir = str(uuid.uuid4())
         self.source_dir = tmp_dir_path + random_dir
         try:
             self.os_dep.mkdir(self.source_dir)
         except:
-            raise Exception("Error: Unable to create tmp directory.")
-
-    def __clone_repo(self):
-        if self.os_dep.system('git clone ' + self.source + ' ' + self.source_dir) != 0:
-            raise Exception("Error: Unable to clone git repo.")
+            raise exceptions.GitHandlerTmpDirCreationException("Error: Unable to create tmp directory.")
 
 class LocalDirectoryHandler:
     source_dir = ""
@@ -76,7 +77,7 @@ class LocalDirectoryHandler:
 
     def __validate_source_dir(self):
         if not self.os_dep.path.isdir(self.source):
-            raise Exception("Error: " + self.source + " is not a directory.")
+            raise exceptions.LocalDirHandlerSourceNotDirException("Error: " + self.source + " is not a directory.")
 
 class HelpHandler:
     source_dir = ""

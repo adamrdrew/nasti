@@ -2,6 +2,7 @@ import unittest
 from nasti.nastifile import NastiFile
 import tests.mocks as mocks
 import os 
+import nasti.exceptions as exceptions
 
 class TestNastiFile(unittest.TestCase):
     def test_unable_to_open_file(self):
@@ -10,7 +11,7 @@ class TestNastiFile(unittest.TestCase):
             "os_dep": os,
             "open_dep": open,
         })
-        with self.assertRaises(Exception):
+        with self.assertRaises(exceptions.NastiFileUnableToOpenFileException):
             nasti.load()
 
     def test_load_valid_yaml(self):
@@ -28,7 +29,7 @@ class TestNastiFile(unittest.TestCase):
             "os_dep": os,
             "open_dep": open,
         })
-        with self.assertRaises(Exception):
+        with self.assertRaises(exceptions.NastiFileInvalidYamlException):
             nasti_file.load()
     
     def test_validate_no_mutations(self):
@@ -38,7 +39,7 @@ class TestNastiFile(unittest.TestCase):
             "open_dep": open,
         })
         nasti_file.load()
-        with self.assertRaises(Exception):
+        with self.assertRaises(exceptions.NastiFileNoMutationsException):
             nasti_file.validate()
     
     def test_validate_mutations_unknown_keys(self):
@@ -48,5 +49,5 @@ class TestNastiFile(unittest.TestCase):
             "open_dep": open,
         })
         nasti_file.load()
-        with self.assertRaises(Exception):
+        with self.assertRaises(exceptions.NastiFileUnknownKeysException):
             nasti_file.validate()

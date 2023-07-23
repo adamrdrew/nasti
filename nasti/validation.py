@@ -1,5 +1,6 @@
 import validators
 import re
+import nasti.exceptions as exceptions
 
 class Validation:
     regex = False
@@ -42,13 +43,13 @@ class Validation:
 
     def __verify_known_kind(self, kind):
         if not kind in self.kinds:
-            raise Exception(f"Error: Unknown kind {kind}")
+            raise exceptions.ValidationUnknownKindException(f"Error: Unknown kind {kind}")
 
     def __validate_config(self, validation_config):
         if not "regex" in validation_config and not "kind" in validation_config: 
-            raise Exception(f"Error: Validation {validation_config} requires regex or kind")
+            raise exceptions.ValidationConfigMissingException(f"Error: Validation {validation_config} requires regex or kind")
         if "regex" in validation_config and "kind" in validation_config: 
-            raise Exception(f"Error: Validation {validation_config} requires regex or kind, not both")
+            raise exceptions.ValidationConfigInvalidException(f"Error: Validation {validation_config} requires regex or kind, not both")
         if "kind" in validation_config:
             self.__verify_known_kind(validation_config["kind"])
 

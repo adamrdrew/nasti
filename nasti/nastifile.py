@@ -1,6 +1,7 @@
 import yaml
 
 from nasti.mutation import Mutation
+import nasti.exceptions as exceptions
 
 class NastiFile:
     MUTATIONS_KEY="mutations"
@@ -24,7 +25,7 @@ class NastiFile:
             try:
                 self.config = yaml.load(file, Loader=yaml.SafeLoader)
             except yaml.YAMLError as e:
-                raise Exception(f"Error: Unable to load {self.path}.")
+                raise exceptions.NastiFileInvalidYamlException(f"Error: Unable to load {self.path}.")
 
     def run(self):
         self.load()
@@ -42,7 +43,7 @@ class NastiFile:
         self.load()
         # verify there are mutations
         if not self.MUTATIONS_KEY in self.config:
-            raise Exception(f"Error: {self.path} does not contain any mutations.")
+            raise exceptions.NastiFileNoMutationsException(f"Error: {self.path} does not contain any mutations.")
         working_dir = self.get_dir()
         # verify each mutation is valid
         for mutation_config in self.config[self.MUTATIONS_KEY]:
@@ -61,7 +62,7 @@ class NastiFile:
         ]
         for key in mutation_config:
             if not key in valid_keys:
-                raise Exception(f"Error: Invalid key in mutation config: {key}")
+                raise exceptions.NastiFileUnknownKeysException(f"Error: Invalid key in mutation config: {key}")
 
     def __set_path(self, path):
         if not path:
@@ -72,4 +73,4 @@ class NastiFile:
     def __verify_exists(self):
         # ensure that the file exists
         if not self.os_dep.path.isfile(self.path):
-            raise Exception(f"Error: {self.path} does not exist.")
+            raise exceptions.NastiFileUnableToOpenFileException(f"Error: {self.path} does not exist.")

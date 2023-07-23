@@ -39,3 +39,9 @@ def mock_print(text):
 
 def mock_open(path, mode):
     pass
+
+def mock_input(text):
+    pass
+
+def mock_failed_open(path, mode):
+    raise OSError("Error: Unable to open file.")

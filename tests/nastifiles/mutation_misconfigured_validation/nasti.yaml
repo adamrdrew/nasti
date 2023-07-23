@@ -1,0 +1,11 @@
+---
+mutations:
+  - name: "example_mutation"
+    prompt: "Example Mutation"
+    help: "Help for an example mutation"
+    replace: "example text to replace"
+    files:
+      - "local_config.json"
+    validation:
+      kind: "slug"
+      regex: "^[a-z0-9-]+$"

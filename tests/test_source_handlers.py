@@ -1,6 +1,7 @@
 import unittest
 from nasti.source_handlers import SourceHandlerResolver, GitHandler, LocalDirectoryHandler, HelpHandler
 import tests.mocks as mocks
+import nasti.exceptions as exceptions
 
 class TestSourceHandlerResolver(unittest.TestCase):
     def test_resolve_dir_handler(self):
@@ -28,8 +29,8 @@ class TestGitHandler(unittest.TestCase):
     
     def test_run_no_git(self):
         handler = GitHandler("git@test.com/test/test.git", mocks.MockOs({"system": 1}))
-        with self.assertRaises(Exception):
-            handler.run()
+        with self.assertRaises(exceptions.GitHandlerGitMissingException):
+            handler.validate_git()
     
     def test_run_create_tmp_dir_fails(self):
         handler = GitHandler(
@@ -39,7 +40,7 @@ class TestGitHandler(unittest.TestCase):
                 "isdir": False
             })
         )
-        with self.assertRaises(Exception):
+        with self.assertRaises(exceptions.GitHandlerTmpDirCreationException):
             handler.run()
     
     def test_run_clone_fails(self):
@@ -49,8 +50,8 @@ class TestGitHandler(unittest.TestCase):
                 "system": 1
             })
         )
-        with self.assertRaises(Exception):
-            handler.run()
+        with self.assertRaises(exceptions.GitHandlerCloneException):
+            handler.clone_repo()
 
 class TestLocalDirectoryHandler(unittest.TestCase):
     def test_run(self):
@@ -61,7 +62,7 @@ class TestLocalDirectoryHandler(unittest.TestCase):
         handler = LocalDirectoryHandler("tests/mocks/this_dir_does_not_exist", mocks.MockOs(
             {"isdir": False}
         ))
-        with self.assertRaises(Exception):
+        with self.assertRaises(exceptions.LocalDirHandlerSourceNotDirException):
             handler.run()
 
 # There is no test for HelpHandler because it is just a byzantine print statement.
