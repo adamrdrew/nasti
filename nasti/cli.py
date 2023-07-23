@@ -1,5 +1,6 @@
 import click
 import sys
+import os
 
 from nasti.nastifile import NastiFile
 from nasti.nasti import Nasti
@@ -18,7 +19,15 @@ def cli():
 @click.option("--git", "-g", help="Create a git repo in the new project. Default is True.", is_flag=True)
 def process(source, git):
     try:
-        nasti = Nasti(source, click.echo, git)
+        nasti = Nasti({
+            "source": source, 
+            "print_func": click.echo, 
+            "git_init": git, 
+            "help_text": cli.get_help(click.Context(cli)),
+            "os_dep": os,
+            "open_dep": open,
+            "input_dep": input
+        })
         nasti.run()
     except Exception as e:
         print(e)
@@ -31,7 +40,11 @@ def validate(path):
     if not path:
         path = "."
     try:
-        nasti_file = NastiFile(path)
+        nasti_file = NastiFile({
+            "path": path,
+            "os_dep": os,
+            "open_dep": open,
+        })
         nasti_file.validate()
         click.echo("Nastifile is valid.")
     except Exception as e:

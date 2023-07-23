@@ -10,21 +10,31 @@ class Mutation:
     files = []
     path = ""
 
-    def __init__(self, mutation_config, path):
+    HELP_KEY = "help"
+    VALIDATION_KEY = "validation"
+    NAME_KEY = "name"
+    PROMPT_KEY = "prompt"
+    REPLACE_KEY = "replace"
+    FILES_KEY = "files"
+
+    def __init__(self, mutation_config, path, os_dep=os, open_dep=open):
+        # Dependency injection
+        self.os_dep = os_dep
+        self.open_dep = open_dep
         # Required fields
         try:
-            self.name        = mutation_config["name"]
-            self.prompt      = mutation_config["prompt"]
-            self.replace     = mutation_config["replace"]
-            self.files       = mutation_config["files"]
+            self.name        = mutation_config[self.NAME_KEY]
+            self.prompt      = mutation_config[self.PROMPT_KEY]
+            self.replace     = mutation_config[self.REPLACE_KEY]
+            self.files       = mutation_config[self.FILES_KEY]
         except Exception as e:
             raise Exception(f"Error: Invalid mutation config: {mutation_config} required field missing missing {e}")
         # Optional fields
-        if "help" in mutation_config:
-            self.help        = mutation_config["help"]
-        if "validation" in mutation_config:
+        if self.HELP_KEY in mutation_config:
+            self.help        = mutation_config[self.HELP_KEY]
+        if self.VALIDATION_KEY in mutation_config:
             try:
-                self.validation = Validation(mutation_config["validation"])
+                self.validation = Validation(mutation_config[self.VALIDATION_KEY])
             except Exception as e:
                 raise Exception(f"Error: Invalid vaidation config in mutation: {mutation_config} {e}")
         self.path = path
@@ -80,10 +90,10 @@ class Mutation:
         for file in self.files:
             # verify file exists
             file_with_path = self.__get_file_full_path(file)
-            if not os.path.isfile(file_with_path):
+            if not self.os_dep.path.isfile(file_with_path):
                 raise Exception(f"Error: mutation: {self.name} file: {file} at: {file_with_path} does not exist.")
             # verify the file contains the text to be replaced
-            with open(file_with_path, 'r') as f:
+            with self.open_dep(file_with_path, 'r') as f:
                 # search for at least one instance of the text to be replaced
                 if not re.search(self.replace, f.read()):
                     raise Exception(f"Error: mutation {self.name} file: {file} at: {file_with_path} does not contain {self.replace} ")

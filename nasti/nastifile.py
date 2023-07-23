@@ -1,51 +1,67 @@
-import click
-import os
-import sys
 import yaml
 
 from nasti.mutation import Mutation
 
 class NastiFile:
-    def __init__(self, path):
-        self.__set_path(path)
+    MUTATIONS_KEY="mutations"
+    NAME_KEY="name"
+    PROMPT_KEY="prompt"
+    REPLACE_KEY="replace"
+    FILES_KEY="files"
+    HELP_KEY="help"
+    VALIDATION_KEY="validation"
+
+    def __init__(self, opts={}):
+        # Dependency injection
+        self.os_dep = opts["os_dep"]
+        self.open_dep = opts["open_dep"]
+
+        self.__set_path(opts["path"])
 
     def load(self):
         self.__verify_exists()
         try:
-            with open(self.path, 'r') as file:
+            with self.open_dep(self.path, 'r') as file:
                 self.config = yaml.safe_load(file)
         except:
             raise Exception(f"Error: Unable to load {self.path}.")
 
+    def run(self):
+        self.load()
+        working_dir = self.get_dir()
+        for mutation_config in self.config[self.MUTATIONS_KEY]:
+            print()
+            mutation = Mutation(mutation_config, working_dir)
+            mutation.run()
+
     # Get the abolute path of the directory containing the nasti file
     def get_dir(self):
-        return os.path.dirname(os.path.abspath(self.path))
+        return self.os_dep.path.dirname(self.os_dep.path.abspath(self.path))
     
     def validate(self):
         self.load()
         # verify there are mutations
-        if not "mutations" in self.config:
+        if not self.MUTATIONS_KEY in self.config:
             raise Exception(f"Error: {self.path} does not contain any mutations.")
         working_dir = self.get_dir()
         # verify each mutation is valid
-        for mutation_config in self.config["mutations"]:
+        for mutation_config in self.config[self.MUTATIONS_KEY]:
             self.__validate_mutation_config_keys(mutation_config)
             mutation = Mutation(mutation_config, working_dir)
             mutation.validate()
 
     def __validate_mutation_config_keys(self, mutation_config):
-        valid_keys = ["name", "prompt", "replace", "files", "help", "validation"]
+        valid_keys = [
+            self.NAME_KEY, 
+            self.PROMPT_KEY, 
+            self.REPLACE_KEY, 
+            self.FILES_KEY, 
+            self.HELP_KEY, 
+            self.VALIDATION_KEY,
+        ]
         for key in mutation_config:
             if not key in valid_keys:
                 raise Exception(f"Error: Invalid key in mutation config: {key}")
-
-    def run(self):
-        self.load()
-        working_dir = self.get_dir()
-        for mutation_config in self.config["mutations"]:
-            print()
-            mutation = Mutation(mutation_config, working_dir)
-            mutation.run()
 
     def __set_path(self, path):
         if not path:
@@ -55,5 +71,5 @@ class NastiFile:
 
     def __verify_exists(self):
         # ensure that the file exists
-        if not os.path.isfile(self.path):
+        if not self.os_dep.path.isfile(self.path):
             raise Exception(f"Error: {self.path} does not exist.")
