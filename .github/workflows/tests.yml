@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - master  # Change 'main' to your main branch name
-
+  pull_request:
+    branches:
+      - master  # Change 'main' to your main branch name
 jobs:
   test:
     runs-on: ubuntu-latest  # Use any runner you prefer
