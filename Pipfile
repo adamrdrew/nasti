@@ -11,6 +11,7 @@ pytest = "*"
 coverage = "*"
 pipenv-setup = "*"
 vistir = "0.6.1"
+twine = "*"
 
 [requires]
 python_version = "3.11"
