@@ -1,6 +1,8 @@
 [![Build Status](https://github.com/adamrdrew/nasti/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/adamrdrew/nasti/actions)
 [![codecov](https://codecov.io/gh/adamrdrew/nasti/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/adamrdrew/nasti?branch=master)
 
+ <center><img src="logo.png"></center>
+
 # NASTI
 NASTI is A Strange Templating Implementation.
 
