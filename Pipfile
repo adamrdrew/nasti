@@ -11,6 +11,8 @@ pytest = "*"
 coverage = "*"
 
 [dev-packages]
+vistir = "0.6.1"
+pipenv-setup = "*"
 
 [requires]
 python_version = "3.11"
