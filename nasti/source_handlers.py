@@ -58,8 +58,7 @@ class GitHandler:
             raise Exception("Error: Unable to create tmp directory.")
 
     def __clone_repo(self):
-        retval = self.os_dep.system('git clone ' + self.source + ' ' + self.source_dir)
-        if retval != 0:
+        if self.os_dep.system('git clone ' + self.source + ' ' + self.source_dir) != 0:
             raise Exception("Error: Unable to clone git repo.")
 
 class LocalDirectoryHandler:
