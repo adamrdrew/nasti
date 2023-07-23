@@ -20,11 +20,11 @@ class NastiFile:
 
     def load(self):
         self.__verify_exists()
-        try:
-            with self.open_dep(self.path, 'r') as file:
-                self.config = yaml.safe_load(file)
-        except:
-            raise Exception(f"Error: Unable to load {self.path}.")
+        with self.open_dep(self.path, 'r') as file:
+            try:
+                self.config = yaml.load(file, Loader=yaml.SafeLoader)
+            except yaml.YAMLError as e:
+                raise Exception(f"Error: Unable to load {self.path}.")
 
     def run(self):
         self.load()

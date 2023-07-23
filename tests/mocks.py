@@ -36,3 +36,6 @@ class MockOs:
 
 def mock_print(text):
     pass
+
+def mock_open(path, mode):
+    pass

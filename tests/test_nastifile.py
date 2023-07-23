@@ -1,0 +1,52 @@
+import unittest
+from nasti.nastifile import NastiFile
+import tests.mocks as mocks
+import os 
+
+class TestNastiFile(unittest.TestCase):
+    def test_unable_to_open_file(self):
+        nasti = NastiFile({
+            "path": "tests/mocks/ddsfdsfdsfsdf",
+            "os_dep": os,
+            "open_dep": open,
+        })
+        with self.assertRaises(Exception):
+            nasti.load()
+
+    def test_load_valid_yaml(self):
+        nasti_file = NastiFile({
+            "path": "tests/nastifiles/valid",
+            "os_dep": os,
+            "open_dep": open,
+        })
+        nasti_file.load()
+        assert nasti_file.config["mutations"][0]["name"] == "example_mutation"
+
+    def test_load_invalid_yaml(self):
+        nasti_file = NastiFile({
+            "path": "tests/nastifiles/bad_yaml",
+            "os_dep": os,
+            "open_dep": open,
+        })
+        with self.assertRaises(Exception):
+            nasti_file.load()
+    
+    def test_validate_no_mutations(self):
+        nasti_file = NastiFile({
+            "path": "tests/nastifiles/no_mutations",
+            "os_dep": os,
+            "open_dep": open,
+        })
+        nasti_file.load()
+        with self.assertRaises(Exception):
+            nasti_file.validate()
+    
+    def test_validate_mutations_unknown_keys(self):
+        nasti_file = NastiFile({
+            "path": "tests/nastifiles/mutation_unknown_keys",
+            "os_dep": os,
+            "open_dep": open,
+        })
+        nasti_file.load()
+        with self.assertRaises(Exception):
+            nasti_file.validate()
