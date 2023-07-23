@@ -8,6 +8,7 @@ click = "*"
 pyyaml = "*"
 validators = "*"
 pytest = "*"
+coverage = "*"
 
 [dev-packages]
 
