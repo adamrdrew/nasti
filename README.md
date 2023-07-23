@@ -15,6 +15,11 @@ NASTI allows you to create project templates, similar to tools like [Cookiecutte
 * Powerful template and project validation system
 * Super easy, barely an inconvenience
 
+## Installation
+```sh
+$ pip install NASTI
+```
+
 ## Usage
 
 ```sh
