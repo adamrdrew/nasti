@@ -1,7 +1,7 @@
 # NASTI
 "That's not a template! That's NASTI!"
 
-NASTI is Not A Standard Template Implementation. It solves the same sort of problem as projects like cookiecutter, but in a radically different way that makes templates easier to develop and mantain.
+NASTI stands for NASTI is A Strange Templating Implementation It solves the same sort of problem as projects like cookiecutter, but in a radically different way that makes templates easier to develop and mantain.
 
 ## Features
 * Templates remain valid source code you can run, build, etc
