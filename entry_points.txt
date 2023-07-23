@@ -1,0 +1,2 @@
+[console_scripts]
+nasti = nasti.cli:cli

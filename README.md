@@ -107,6 +107,32 @@ kinds = {
 }
 ```
 
+## Development
+
+### Dependency Management & Virtual Environment
+This project uses [pipenv](https://github.com/pypa/pipenv) to manage dependencies and the virtual environment. You'll want to make sure you have pipenv installed. Then after you pull down the NASTI code run `pipenv install`. You can then enter the virtual environment and get to hacking with `pipenv shell`.
+
+### Running from Source
+If you are hacking on the app and you want to run the version you have in the source tree enter the venv with `pipenv shell` and then run the app directly:
+
+```
+$ python nasti.py [COMMANDS] [OPTIONS]
+```
+
+Even if you have NASTI installed as a command on your machine globally this should run the version in the source tree.
+
+### Tests & Code Coverage
+You can run tests with `make test` and generate a codecoverage report with `make coverage`. PRs are very, very much welcome but please make sure anything you introduce or refactor passes tests and includes new tests if required.
+
+### Building & Publishing
+I barely understand Python packaging publishing. Describing it as a complex mess would be an understatement. I think I have it working as simply as possible, but I had to do so much trial and error I don't know whether what seems to work on my machine will work on someone else's. Help very much welcome on this!
+
+1. Exit the venv if you are in it
+2. Bump the version in `setup.cfg`
+2. Install build deps with `make install-build-deps`
+3. Build `make build-app`
+4. Publish `make publish`
+
 ## Project Justification
 Do we really need another project template system? And if we do, do we really want one this weird?
 
