@@ -19,7 +19,7 @@ class Mutation:
     REPLACE_KEY = "replace"
     FILES_KEY = "files"
 
-    def __init__(self, mutation_config, path, os_dep=os, open_dep=open, input_dep=input, print_dep=print):
+    def __init__(self, mutation_config: dict, path, os_dep=os, open_dep=open, input_dep=input, print_dep=print):
         # Dependency injection
         self.os_dep = os_dep
         self.open_dep = open_dep

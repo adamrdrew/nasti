@@ -66,6 +66,12 @@ class TestMutation(unittest.TestCase):
         with self.assertRaises(Exception):
             Mutation(mutation_config, "tests/nastifiles/mutation_misconfigured_validation")
 
+    def test_mutation_with_missing_required_config(self):
+        mutation_config = {
+            "prompt": "test prompt",
+        }
+        with self.assertRaises(exceptions.MutationRequiredKeysMissingException):
+            Mutation(mutation_config, "")
 
     def test_file_doesnt_contain_replacement_text(self):
         input_dep = func = lambda x: "bogus_slug"

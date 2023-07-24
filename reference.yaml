@@ -1,0 +1,38 @@
+---
+globals:
+  - name: "app_name"
+    prompt: "App Name"
+    help: "The name of your application"
+    validation:
+      regex: "^[a-z0-9_]+$"
+
+mutations:
+  - name: "example_mutation"
+    prompt: "Example Mutation"
+    help: "Help for an example mutation"
+    replace: "example text to replace"
+    default: {{ globals.app_name }}
+    files: []
+    validation:
+      kind: "slug"
+
+filesystem_operations:
+  - name: "rename_docs"
+    prompt: "Name of docs directory"
+    help: "Set the name of the docs directory"
+    file: "docs"
+    validation:
+      kind: "directory"
+
+hooks:
+  before:
+    - name: "make_clean"
+      message: "Make Clean before hook"
+      command: "make clean"
+  after:
+    - name: "install_deps"
+      message: "Install dependencies after hook"
+      command: "make install-deps"
+    - name: "generate_docs"
+      message: "Generate docs after hook"
+      command: "make docs"

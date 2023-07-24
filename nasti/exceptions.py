@@ -48,3 +48,9 @@ class NastiFileNoMutationsException(Exception):
 
 class NastiFileUnknownKeysException(Exception):
     pass
+
+class GlobalRequiredKeysMissingException(Exception):
+    pass
+
+class GlobalTooManyInputTriesException(Exception):
+    pass
