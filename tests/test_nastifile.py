@@ -81,3 +81,18 @@ class TestNastiFile(unittest.TestCase):
         unmentioned_files = nasti_file.find_unmentioned_files()
         assert len(unmentioned_files.get_results()) == 0
         assert len(unmentioned_files.get_report()) == 0
+    
+    def test_globals(self):
+        input_dep = func = lambda x: "test_global_value"
+        print_dep = func = lambda x: None
+        nasti_file = NastiFile({
+            "path": "tests/nastifiles/globals",
+            "os_dep": os,
+            "open_dep": open,
+            "input_dep": input_dep,
+            "print_dep": print_dep
+        })
+        nasti_file.load()
+        nasti_file.run()
+        global_obj = nasti_file.get_global("app_name")
+        assert global_obj.get_value() == "test_global_value"
