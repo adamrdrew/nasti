@@ -1,7 +1,32 @@
+import re
 import yaml
 
 from nasti.mutation import Mutation
 import nasti.exceptions as exceptions
+
+class UnmentionedFilesResultItem:
+    def __init__(self, files, mutation):
+        self.files = files
+        self.mutation = mutation
+
+    def print(self):
+        print(f"\nMutation {self.mutation.name} matches but does not reference:")
+        for file in self.files:
+            print(f"    {file}")
+
+class UnmentionedFilesResult:
+    def __init__(self):
+        self.results = []
+    
+    def add(self, mutation, files):
+        self.results.append(UnmentionedFilesResultItem(files, mutation))
+
+    def print(self):
+        if len(self.results) == 0:
+            return
+        print("The following mutations match files not listed in the nastifile:")
+        for result in self.results:
+            result.print() 
 
 class NastiFile:
     MUTATIONS_KEY="mutations"
@@ -50,6 +75,22 @@ class NastiFile:
             self.__validate_mutation_config_keys(mutation_config)
             mutation = Mutation(mutation_config, working_dir)
             mutation.validate()
+    
+    def find_unmentioned_files(self):
+        self.load()
+        unmentioned_files = UnmentionedFilesResult()
+        # verify there are mutations
+        if not self.MUTATIONS_KEY in self.config:
+            raise exceptions.NastiFileNoMutationsException(f"Error: {self.path} does not contain any mutations.")
+        working_dir = self.get_dir()
+        # verify each mutation is valid
+        for mutation_config in self.config[self.MUTATIONS_KEY]:
+            mutation = Mutation(mutation_config, working_dir)
+            mutation_unmentioned_files = mutation.find_unmentioned_files(working_dir)
+            if len(mutation_unmentioned_files) > 0:
+                unmentioned_files.add(mutation, mutation_unmentioned_files)
+        return unmentioned_files
+
 
     def __validate_mutation_config_keys(self, mutation_config):
         valid_keys = [
