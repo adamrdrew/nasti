@@ -12,7 +12,7 @@ coverage:
 install-build-deps:
 	pip install build twine wheel
 build-app:
-	rm -rf dist
+	rm -rf build dist *.egg-info
 	python -m build
 publish:
 	python -m twine upload dist/*
