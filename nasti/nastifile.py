@@ -14,12 +14,17 @@ class UnmentionedFilesResult:
             return
         self.results.append(UnmentionedFilesResultItem(files, mutation))
 
-    def print(self):
+    def get_report(self):
         if len(self.results) == 0:
-            return
-        print("The following mutations match files not listed in the nastifile:")
+            return ""
+        report = ""
+        report += "The following mutations match files not listed in the nastifile:\n"
         for result in self.results:
-            result.print() 
+            report += result.get_report()
+        return report
+
+    def get_results(self):
+        return self.results
 
 # This class stores the individual results of a find operation
 class UnmentionedFilesResultItem:
@@ -27,10 +32,18 @@ class UnmentionedFilesResultItem:
         self.files = files
         self.mutation = mutation
 
-    def print(self):
-        print(f"\nMutation {self.mutation.name} matches but does not reference:")
+    def get_report(self):
+        report = ""
+        report += f"\nMutation {self.mutation.name} matches but does not reference:\n"
         for file in self.files:
-            print(f"    {file}")
+            report += f"    {file}"
+        return report
+    
+    def get_files(self):
+        return self.files
+
+    def get_mutation(self):
+        return self.mutation
 
 class NastiFile:
     MUTATIONS_KEY="mutations"

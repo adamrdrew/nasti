@@ -63,7 +63,7 @@ def find(path):
             "open_dep": open,
         })
         unmentioned_files = nasti_file.find_unmentioned_files()
-        unmentioned_files.print()
+        click.echo(unmentioned_files.get_report())
     except Exception as e:
         print(e)
         sys.exit(1)
