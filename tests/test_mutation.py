@@ -16,6 +16,15 @@ class TestMutation(unittest.TestCase):
         with self.assertRaises(exceptions.MutationEmptyFilesException):
             mutation.validate()
 
+    def test_unmentioned_files(self):
+        #open the yaml file
+        with open("tests/nastifiles/mutation_unmentioned_files/nasti.yaml", "r") as f:
+            config = yaml.safe_load(f)
+        mutation_config = config["mutations"][0]
+        mutation = Mutation(mutation_config, "tests/nastifiles/mutation_unmentioned_files")
+        unmentioned_files = mutation.find_unmentioned_files("tests/nastifiles/mutation_unmentioned_files")
+        assert unmentioned_files == ['files/nested/unmentioned', 'files/unmentioned']
+
     # this tests that the files array is not present
     def test_no_files(self):
         #open the yaml file
