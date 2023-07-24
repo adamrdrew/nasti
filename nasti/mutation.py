@@ -45,6 +45,7 @@ class Mutation:
 
     # Recursively find all files in the directory that contain the text to be replaced
     # and are not mentioned in the mutation
+    # Returns a list of file paths relative to the working directory
     def find_unmentioned_files(self, root_dir):
         if not root_dir:
             root_dir = self.path
