@@ -85,6 +85,19 @@ Error: Invalid mutation config: {'name': 'quay', 'help': 'The quay repo is the l
 
 You can easily build out your nastifile by adding or updating mutations, validating, and fixing what doesn't work. It also makes a good fit for an automated PR check in your repo.
 
+### Find Files Matching a Mutation
+Mutations are file-scoped, meaning they'll only replace text in files in the mutation's file list. But what if you aren't sure whether you have the file list complete? Maybe the text you want to replace is in a file you forgot to add to the file list. The `find` command solves this problem by finding all files that contain your mutation replacement text but aren't in your mutation file lists:
+
+```
+$ nasti find tests/nastifiles/mutation_unmentioned_files/
+The following mutations match files not listed in the nastifile:
+
+Mutation example_mutation matches but does not reference:
+    files/nested/unmentioned    files/unmentioned
+```
+
+In the example above the nastifile has a mutation called `example_mutation` that would match the files `files/nested/unmentioned` and `files/unmentioned` but those files don't appear in the `example_mutation` file list.
+
 ### Validation Kinds
 As shown above you can create any custom validation regex you want, but for common tasks we ship a bunch of prebuilt validations thanks to the excellent [Validators](https://github.com/python-validators/validators) library.
 

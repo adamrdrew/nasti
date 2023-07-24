@@ -43,8 +43,78 @@ class Mutation:
                 raise e(f"Error: Invalid vaidation config in mutation: {mutation_config} {e}")
         self.path = path
 
+    # Recursively find all files in the directory that contain the text to be replaced
+    # and are not mentioned in the mutation
+    # Returns a list of file paths relative to the working directory
+    def find_unmentioned_files(self, root_dir):
+        if not root_dir:
+            root_dir = self.path
+        unmentioned_files = []
+        # list all files in the directory
+        files_in_dir = self.os_dep.listdir(root_dir)
+        # for each file in the directory
+        for file_in_dir in files_in_dir:
+            # skip the nastifile
+            if file_in_dir == 'nasti.yaml':
+                continue
+            # if the file starts with a dot skip it
+            if file_in_dir.startswith('.'):
+                continue
+            # The file path is relative to the working directory
+            # so we need to construct fill file path
+            file_full_path = root_dir + '/' + file_in_dir
+
+            # if the file is a directory recurse
+            if self.os_dep.path.isdir(file_full_path):
+                unmentioned_files += self.find_unmentioned_files(file_full_path)
+                continue
+            
+            # Determine if the file is in the mutation file list and if it is we'll skip it
+            # this code is kind of hard to read so I'll explain it
+            # We split the full file path by the working directory path
+            # this gives us a list with elements: the working directory, the relative path to the file
+            file_path_split = file_full_path.split(self.path)
+            # remove the working directory from the list because we don't need it
+            # as files in a mutation are relative to the working directory
+            file_path_split.pop(0)
+            # now we have a list with one element: the relative path to the file
+            # we get the first element and remove the leading slash
+            relative_file_path = file_path_split[0].lstrip('/')
+            # the end result of all this is that a path like this:
+            # /home/user/projects/nasti/nasti.yaml
+            # with a working directory of:
+            # /home/user/projects/nasti
+            # becomes this:
+            # nasti.yaml
+            # which is the same format as the files in the mutation file list
+            # so we can just check if the file is in the list and if it is we skip it
+            if relative_file_path in self.files:
+                continue
+
+            # look into the file and see if the text to be replaced is there
+            with self.open_dep(file_full_path, 'r') as f:
+                if re.search(self.replace, f.read()):
+                    # if the text to be replaced is there add it to the list
+                    unmentioned_files.append(relative_file_path)
+        return unmentioned_files
+
+    # Validate the nastifile syntax
+    # Raises exceptions if there are any problems
     def validate(self):
-            self.__validate_files()
+        # verify files isn't empty
+        if len(self.files) == 0:
+            raise exceptions.MutationEmptyFilesException(f"Error: mutation {self.name} does not contain any files.")
+        for file in self.files:
+            # verify file exists
+            file_with_path = self.__get_file_full_path(file)
+            if not self.os_dep.path.isfile(file_with_path):
+                raise exceptions.MutationFileDoesNotExistException(f"Error: mutation: {self.name} file: {file} at: {file_with_path} does not exist.")
+            # verify the file contains the text to be replaced
+            with self.open_dep(file_with_path, 'r') as f:
+                # search for at least one instance of the text to be replaced
+                if not re.search(self.replace, f.read()):
+                    raise exceptions.MutationFileDoesNotContainReplacementStringException(f"Error: mutation {self.name} file: {file} at: {file_with_path} does not contain {self.replace} ")
+
 
     def run(self):
         # Prompt the user for input
@@ -86,21 +156,6 @@ class Mutation:
             return True
         # Validate the input by testing it against the validations
         return self.validation.validate(input)
-
-    def __validate_files(self):
-        # verify files isn't empty
-        if len(self.files) == 0:
-            raise exceptions.MutationEmptyFilesException(f"Error: mutation {self.name} does not contain any files.")
-        for file in self.files:
-            # verify file exists
-            file_with_path = self.__get_file_full_path(file)
-            if not self.os_dep.path.isfile(file_with_path):
-                raise exceptions.MutationFileDoesNotExistException(f"Error: mutation: {self.name} file: {file} at: {file_with_path} does not exist.")
-            # verify the file contains the text to be replaced
-            with self.open_dep(file_with_path, 'r') as f:
-                # search for at least one instance of the text to be replaced
-                if not re.search(self.replace, f.read()):
-                    raise exceptions.MutationFileDoesNotContainReplacementStringException(f"Error: mutation {self.name} file: {file} at: {file_with_path} does not contain {self.replace} ")
 
     def __get_file_full_path(self, file):
         return self.path + '/' + file

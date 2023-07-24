@@ -33,7 +33,6 @@ class Validation:
             return self.__is_valid_regex(input)
         if self.kind:
             return self.__is_valid_kind(input)
-        return False
 
     def __is_valid_regex(self, input):
         return bool(re.match(self.regex, input))

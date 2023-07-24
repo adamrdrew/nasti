@@ -14,6 +14,5 @@ install-build-deps:
 build-app:
 	rm -rf dist
 	python -m build
-
 publish:
 	python -m twine upload dist/*

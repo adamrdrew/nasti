@@ -1,5 +1,5 @@
 import unittest
-from nasti.nastifile import NastiFile
+from nasti.nastifile import NastiFile, UnmentionedFilesResult, UnmentionedFilesResultItem
 import tests.mocks as mocks
 import os 
 import nasti.exceptions as exceptions
@@ -51,3 +51,33 @@ class TestNastiFile(unittest.TestCase):
         nasti_file.load()
         with self.assertRaises(exceptions.NastiFileUnknownKeysException):
             nasti_file.validate()
+    
+    def test_unmentioned_files_found(self):
+        nasti_file = NastiFile({
+            "path": "tests/nastifiles/mutation_unmentioned_files",
+            "os_dep": os,
+            "open_dep": open,
+        })
+        unmentioned_files = nasti_file.find_unmentioned_files()
+        # assert on array length
+        assert isinstance(unmentioned_files, UnmentionedFilesResult)
+        report = unmentioned_files.get_report()
+        assert isinstance(report, str)
+        assert len(report) != 0
+        assert len(unmentioned_files.get_results()) == 1
+        assert len(unmentioned_files.get_results()[0].files) == 2
+        result = unmentioned_files.get_results()[0]
+        assert isinstance(result, UnmentionedFilesResultItem)
+        assert result.get_mutation().name == "example_mutation"
+        assert "files/unmentioned" in result.get_files()
+        assert "files/nested/unmentioned" in result.get_files()
+
+    def test_unmentioned_files_not_found(self):
+        nasti_file = NastiFile({
+            "path": "tests/nastifiles/valid",
+            "os_dep": os,
+            "open_dep": open,
+        })
+        unmentioned_files = nasti_file.find_unmentioned_files()
+        assert len(unmentioned_files.get_results()) == 0
+        assert len(unmentioned_files.get_report()) == 0

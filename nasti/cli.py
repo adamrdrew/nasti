@@ -51,5 +51,23 @@ def validate(path):
         print(e)
         sys.exit(1)
 
+@click.command()
+@click.argument("path", required=False)
+def find(path):
+    if not path:
+        path = "."
+    try:
+        nasti_file = NastiFile({
+            "path": path,
+            "os_dep": os,
+            "open_dep": open,
+        })
+        unmentioned_files = nasti_file.find_unmentioned_files()
+        click.echo(unmentioned_files.get_report())
+    except Exception as e:
+        print(e)
+        sys.exit(1)
+
 cli.add_command(process)
 cli.add_command(validate)
+cli.add_command(find)
