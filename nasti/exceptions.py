@@ -16,6 +16,9 @@ class MutationTooManyInputTriesException(Exception):
 class MutationTextReplacementFailedException(Exception):
     pass
 
+class MutationDefaultTemplateInvalidException(Exception):
+    pass
+
 class ValidationConfigMissingException(Exception):
     pass
 

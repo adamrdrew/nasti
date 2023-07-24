@@ -94,6 +94,7 @@ class NastiFile:
         working_dir = self.get_dir()
         for mutation_config in self.config[self.MUTATIONS_KEY]:
             self.print_dep("")
+            mutation_config["globals"] = self.globals
             mutation = Mutation(mutation_config, working_dir, os, open, self.input_dep, self.print_dep)
             mutation.run()
 
@@ -103,7 +104,7 @@ class NastiFile:
                 self.print_dep("")
                 global_obj = Global(global_config, self.input_dep, self.print_dep)
                 global_obj.populate()
-                self.globals[global_obj.name] = global_obj
+                self.globals[global_obj.get_name()] = global_obj.get_value()
     
     def get_global(self, name):
         if name in self.globals:

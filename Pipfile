@@ -9,6 +9,7 @@ pyyaml = "*"
 validators = "*"
 pytest = "*"
 coverage = "*"
+jinja2 = "*"
 
 [dev-packages]
 vistir = "0.6.1"

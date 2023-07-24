@@ -113,3 +113,27 @@ class TestMutation(unittest.TestCase):
         assert file_contents == "just bogus_slug please"
         #delete the file we replaced stuff in
         os.remove("tests/nastifiles/mutation_run/test.txt")
+
+    def test_mutation_default_and_globals_simple(self):
+        input_dep = func = lambda x: "bogus_slug"
+        print_dep = func = lambda x: None
+        #open the yaml file
+        with open("tests/nastifiles/mutation_default_and_globals_simple/nasti.yaml", "r") as f:
+            config = yaml.safe_load(f)
+        mutation_config = config["mutations"][0]
+        mutation_config["globals"] = {config["globals"][0]["name"]: "Test App"}
+        mutation = Mutation(mutation_config, "tests/nastifiles/mutation_default_and_globals_simple", os, open, input_dep, print_dep)
+        default_value = mutation.render_default_template()
+        assert default_value == "Test App"
+
+    def test_mutation_default_and_globals_complex(self):
+        input_dep = func = lambda x: "bogus_slug"
+        print_dep = func = lambda x: None
+        #open the yaml file
+        with open("tests/nastifiles/mutation_default_and_globals_complex/nasti.yaml", "r") as f:
+            config = yaml.safe_load(f)
+        mutation_config = config["mutations"][0]
+        mutation_config["globals"] = {config["globals"][0]["name"]: "Test App"}
+        mutation = Mutation(mutation_config, "tests/nastifiles/mutation_default_and_globals_complex", os, open, input_dep, print_dep)
+        default_value = mutation.render_default_template()
+        assert default_value == "test_app"

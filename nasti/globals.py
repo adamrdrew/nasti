@@ -11,6 +11,7 @@ class Global:
     prompt = None
     value = None
     help = None
+    validation = None
 
     def __init__(self, opts: dict, input_dep, print_dep):
         # Dependency injection
@@ -50,4 +51,7 @@ class Global:
                 raise exceptions.GlobalTooManyInputTriesException(f"Error: Too many tries for global {self.name}")
 
     def get_value(self):
-        return self.value            
+        return self.value
+    
+    def get_name(self):
+        return self.name
