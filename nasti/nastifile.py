@@ -68,12 +68,12 @@ class NastiFile:
     def get_dir(self):
         return self.os_dep.path.dirname(self.os_dep.path.abspath(self.path))
     
-
+    # Validate the nastifile syntax
     def validate(self):
-        # verify each mutation is valid
         for mutation in self.__mutations():
              mutation.validate()
     
+    # Find files that are not mentioned in the nastifile
     def find_unmentioned_files(self):
         unmentioned_files = UnmentionedFilesResult()
         for mutation in self.__mutations():
@@ -81,16 +81,20 @@ class NastiFile:
             unmentioned_files.add(mutation, mutation_unmentioned_files)
         return unmentioned_files
 
+    # Get a list of mutation objects from the config
+    # Does some validation on the config
     def __mutations(self):
         mutations = []
         self.load()
         # verify there are mutations
         if not self.MUTATIONS_KEY in self.config:
             raise exceptions.NastiFileNoMutationsException(f"Error: {self.path} does not contain any mutations.")
-        # verify each mutation is valid
         working_dir = self.get_dir()
         for mutation_config in self.config[self.MUTATIONS_KEY]:
+            # verify each mutation is valid
+            # throws an exception if there is a problem
             self.__validate_mutation_config_keys(mutation_config)
+            # create a mutation object and add it to the list
             mutation = Mutation(mutation_config, working_dir)
             mutations.append(mutation)
         return mutations
