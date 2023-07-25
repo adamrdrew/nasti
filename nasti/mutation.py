@@ -145,8 +145,10 @@ class Mutation:
         # If there is a default value, print it
         if self.default:
             default = self.render_default_template()
-            self.print_dep(f"Default: {default}")
+            self.print_dep(f"Enter for Default: {default}")
         user_input = self.__get_user_input()
+        if user_input == "":
+            user_input = self.render_default_template()
         try:
             self.__replace_text_in_files(user_input)
         except Exception as e:

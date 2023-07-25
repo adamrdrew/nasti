@@ -137,3 +137,15 @@ class TestMutation(unittest.TestCase):
         mutation = Mutation(mutation_config, "tests/nastifiles/mutation_default_and_globals_complex", os, open, input_dep, print_dep)
         default_value = mutation.render_default_template()
         assert default_value == "test_app"
+
+    def test_mutation_default_exception(self):
+        input_dep = func = lambda x: "bogus_slug"
+        print_dep = func = lambda x: None
+        #open the yaml file
+        with open("tests/nastifiles/mutation_default_exception/nasti.yaml", "r") as f:
+            config = yaml.safe_load(f)
+        mutation_config = config["mutations"][0]
+        mutation_config["globals"] = {config["globals"][0]["name"]: "Test App"}
+        mutation = Mutation(mutation_config, "tests/nastifiles/mutation_default_exception", os, open, input_dep, print_dep)
+        with self.assertRaises(exceptions.MutationDefaultTemplateInvalidException):
+            mutation.render_default_template()

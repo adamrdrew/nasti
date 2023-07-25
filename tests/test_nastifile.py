@@ -86,7 +86,7 @@ class TestNastiFile(unittest.TestCase):
         input_dep = func = lambda x: "test_global_value"
         print_dep = func = lambda x: None
         nasti_file = NastiFile({
-            "path": "tests/nastifiles/globals",
+            "path": "tests/nastifiles/nastifile_globals",
             "os_dep": os,
             "open_dep": open,
             "input_dep": input_dep,
@@ -101,7 +101,7 @@ class TestNastiFile(unittest.TestCase):
         input_dep = func = lambda x: "input_from_user"
         print_dep = func = lambda x: None
         nasti_file = NastiFile({
-            "path": "tests/nastifiles/default",
+            "path": "tests/nastifiles/nastifile_default",
             "os_dep": os,
             "open_dep": open,
             "input_dep": input_dep,
