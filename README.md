@@ -38,7 +38,7 @@ $ nasti process --git ~/Development/some-template
 ## Template Creation
 All you need to get started is a project you that want to be available as a template. It can be in any language, with any project layout. 
 
-Simply add a nastifile called `nasti.yaml` to the root of your project and add some mutations:
+Simply add a nastifile called `nasti.yaml` to the root of your project and add some mutations. Mutations are definition of text replacement operations.
 
 ```yaml
 ---
@@ -125,6 +125,60 @@ kinds = {
     "url":          validators.url,
     "uuid":         validators.uuid,
 }
+```
+
+### Globals and Default Templates
+You may want to make the same input available to multiple mutations. Globals allow you to gather information from the user and then reference that input in mutations. Globals are accessed through mutation features called default templates. Default templates use Jina2 template syntax allowing you to create derived values such as converting "App Name" to "app_name" or combine mutliple globals.
+
+Example:
+```yaml
+---
+globals:
+  - name: "app_name"
+    prompt: "App Name"
+    help: "The name of your application"
+mutations:
+  - name: "example_mutation"
+    prompt: "Example Mutation"
+    help: "Help for an example mutation"
+    replace: "example text to replace"
+    default: "{{ app_name }}"
+    files: []
+    validation:
+      kind: "slug"
+```
+
+In the above example the user will first be prompted to enter data for the global called "app_name". Whatever the user enters will be used as the default value for the mutation "example_mutation". If a default is presented to the user they'll have the option to hit enter without entering any input to use the default.
+
+A more complex example showing the Jinja2 template syntax:
+```yaml
+---
+globals:
+  - name: "app_name"
+    prompt: "App Name"
+    help: "The name of your application"
+mutations:
+  - name: "example_mutation"
+    prompt: "Example Mutation"
+    help: "Help for an example mutation"
+    replace: "example text to replace"
+    default: "{{ app_name.lower().split(' ') | join('_') }}"
+    files: []
+    validation:
+      kind: "slug"
+```
+
+In that example if the user entered "My Great App" for the "app_name" global the "example_mutation" would have a default value of "my_great_app". Jinja2 syntax is extremely power, allowing you to use built in filters, call native Python methods, and more. [Check out their documentaiton](https://jinja.palletsprojects.com/en/2.10.x/templates/) for more info. 
+
+Also, note that globals support validations using exactly the same syntax as mutaitons:
+
+```yaml
+globals:
+  - name: "route_prefix"
+    prompt: "Route Prefix"
+    help: "Your route prefix"
+    validation:
+      kind: slug
 ```
 
 ## Development
