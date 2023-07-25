@@ -2,7 +2,7 @@ import os
 import re
 from nasti.validation import Validation
 import nasti.exceptions as exceptions
-
+from jinja2 import Template
 
 class Mutation:
     prompt = ""
@@ -11,6 +11,8 @@ class Mutation:
     replace = ""
     files = []
     path = ""
+    default = False
+    globals = {}
 
     HELP_KEY = "help"
     VALIDATION_KEY = "validation"
@@ -18,8 +20,10 @@ class Mutation:
     PROMPT_KEY = "prompt"
     REPLACE_KEY = "replace"
     FILES_KEY = "files"
+    DEFAULT_KEY = "default"
+    GLOBALS_KEY = "globals"
 
-    def __init__(self, mutation_config, path, os_dep=os, open_dep=open, input_dep=input, print_dep=print):
+    def __init__(self, mutation_config: dict, path, os_dep=os, open_dep=open, input_dep=input, print_dep=print):
         # Dependency injection
         self.os_dep = os_dep
         self.open_dep = open_dep
@@ -36,6 +40,10 @@ class Mutation:
         # Optional fields
         if self.HELP_KEY in mutation_config:
             self.help        = mutation_config[self.HELP_KEY]
+        if self.GLOBALS_KEY in mutation_config:
+            self.globals     = mutation_config[self.GLOBALS_KEY]
+        if self.DEFAULT_KEY in mutation_config:
+            self.default     = mutation_config[self.DEFAULT_KEY]
         if self.VALIDATION_KEY in mutation_config:
             try:
                 self.validation = Validation(mutation_config[self.VALIDATION_KEY])
@@ -104,6 +112,9 @@ class Mutation:
         # verify files isn't empty
         if len(self.files) == 0:
             raise exceptions.MutationEmptyFilesException(f"Error: mutation {self.name} does not contain any files.")
+        # If there's a default template verify it renders
+        if self.default:
+            self.render_default_template()
         for file in self.files:
             # verify file exists
             file_with_path = self.__get_file_full_path(file)
@@ -115,12 +126,29 @@ class Mutation:
                 if not re.search(self.replace, f.read()):
                     raise exceptions.MutationFileDoesNotContainReplacementStringException(f"Error: mutation {self.name} file: {file} at: {file_with_path} does not contain {self.replace} ")
 
+    def render_default_template(self):
+        default_value = ""
+        if not self.default:
+            return
+        try:
+            template = Template(self.default)
+            default_value = template.render(**self.globals)
+        except Exception as e:
+            raise exceptions.MutationDefaultTemplateInvalidException(f"Error: Unable to render default template: {e}")
+        return default_value
+        
 
     def run(self):
         # Prompt the user for input
         if self.help:
             self.print_dep(self.help)
+        # If there is a default value, print it
+        if self.default:
+            default = self.render_default_template()
+            self.print_dep(f"Enter for Default: {default}")
         user_input = self.__get_user_input()
+        if user_input == "":
+            user_input = self.render_default_template()
         try:
             self.__replace_text_in_files(user_input)
         except Exception as e:

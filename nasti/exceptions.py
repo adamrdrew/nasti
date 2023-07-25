@@ -16,6 +16,9 @@ class MutationTooManyInputTriesException(Exception):
 class MutationTextReplacementFailedException(Exception):
     pass
 
+class MutationDefaultTemplateInvalidException(Exception):
+    pass
+
 class ValidationConfigMissingException(Exception):
     pass
 
@@ -47,4 +50,13 @@ class NastiFileNoMutationsException(Exception):
     pass
 
 class NastiFileUnknownKeysException(Exception):
+    pass
+
+class NastiFileGlobalNotFoundException(Exception):
+    pass
+
+class GlobalRequiredKeysMissingException(Exception):
+    pass
+
+class GlobalTooManyInputTriesException(Exception):
     pass

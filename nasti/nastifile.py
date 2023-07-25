@@ -1,8 +1,11 @@
+import os
 import re
 import yaml
 
 from nasti.mutation import Mutation
+from nasti.globals import Global
 import nasti.exceptions as exceptions
+
 
 # This class is used to store the results of the find command
 class UnmentionedFilesResult:
@@ -53,11 +56,23 @@ class NastiFile:
     FILES_KEY="files"
     HELP_KEY="help"
     VALIDATION_KEY="validation"
+    GLOBALS_KEY="globals"
+
+    globals = {}
 
     def __init__(self, opts={}):
         # Dependency injection
         self.os_dep = opts["os_dep"]
         self.open_dep = opts["open_dep"]
+
+        if "print_dep" in opts:
+            self.print_dep = opts["print_dep"]
+        else:
+            self.print_dep = print
+        if "input_dep" in opts:
+            self.input_dep = opts["input_dep"]
+        else:
+            self.input_dep = input
 
         self.__set_path(opts["path"])
 
@@ -71,11 +86,30 @@ class NastiFile:
 
     def run(self):
         self.load()
+        self.run_globals()
+        self.run_mutations()
+
+
+    def run_mutations(self):
         working_dir = self.get_dir()
         for mutation_config in self.config[self.MUTATIONS_KEY]:
-            print()
-            mutation = Mutation(mutation_config, working_dir)
+            self.print_dep("")
+            mutation_config["globals"] = self.globals
+            mutation = Mutation(mutation_config, working_dir, os, open, self.input_dep, self.print_dep)
             mutation.run()
+
+    def run_globals(self):
+        if self.GLOBALS_KEY in self.config:
+            for global_config in self.config[self.GLOBALS_KEY]:
+                self.print_dep("")
+                global_obj = Global(global_config, self.input_dep, self.print_dep)
+                global_obj.populate()
+                self.globals[global_obj.get_name()] = global_obj.get_value()
+    
+    def get_global(self, name):
+        if name in self.globals:
+            return self.globals[name]
+        raise exceptions.NastiFileGlobalNotFoundException(f"Error: Global {name} not found.")
 
     # Get the abolute path of the directory containing the nasti file
     def get_dir(self):
