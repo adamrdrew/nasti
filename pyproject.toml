@@ -4,11 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "NASTI"
-version = "0.1.5"
+version = "0.1.6"
 authors = [
   { name="Adam Drew", email="adamrdrew@live.com" },
 ]
-description = "NASTI is Not A Starndard Templating Implementation"
+description = "NASTI's A Strange Templating Implementation"
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
