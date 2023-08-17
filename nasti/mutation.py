@@ -2,7 +2,9 @@ import os
 import re
 from nasti.validation import Validation
 import nasti.exceptions as exceptions
-from jinja2 import Template
+from jinja2 import Template, Environment
+import jinja2.exceptions as jinja2_exceptions
+
 
 class Mutation:
     prompt = ""
@@ -114,7 +116,7 @@ class Mutation:
             raise exceptions.MutationEmptyFilesException(f"Error: mutation {self.name} does not contain any files.")
         # If there's a default template verify it renders
         if self.default:
-            self.render_default_template()
+            self.validate_default_template()
         for file in self.files:
             # verify file exists
             file_with_path = self.__get_file_full_path(file)
@@ -125,6 +127,17 @@ class Mutation:
                 # search for at least one instance of the text to be replaced
                 if not re.search(self.replace, f.read()):
                     raise exceptions.MutationFileDoesNotContainReplacementStringException(f"Error: mutation {self.name} file: {file} at: {file_with_path} does not contain {self.replace} ")
+
+    def validate_default_template(self):
+        default_value = ""
+        if not self.default:
+            return
+        try:
+            env = Environment()
+            env.parse(self.default)
+        except Exception as e:
+            raise exceptions.MutationDefaultTemplateInvalidException(f"Error: Unable to render default template: {e}")
+        return default_value
 
     def render_default_template(self):
         default_value = ""

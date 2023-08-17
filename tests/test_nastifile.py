@@ -40,7 +40,7 @@ class TestNastiFile(unittest.TestCase):
         })
         nasti_file.load()
         with self.assertRaises(exceptions.NastiFileNoMutationsException):
-            nasti_file.validate()
+            nasti_file.validate_mutations()
     
     def test_validate_mutations_unknown_keys(self):
         nasti_file = NastiFile({
@@ -50,7 +50,7 @@ class TestNastiFile(unittest.TestCase):
         })
         nasti_file.load()
         with self.assertRaises(exceptions.NastiFileUnknownKeysException):
-            nasti_file.validate()
+            nasti_file.validate_mutations()
     
     def test_unmentioned_files_found(self):
         nasti_file = NastiFile({

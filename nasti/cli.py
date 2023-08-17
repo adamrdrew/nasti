@@ -45,7 +45,8 @@ def validate(path):
             "os_dep": os,
             "open_dep": open,
         })
-        nasti_file.validate()
+        nasti_file.load()
+        nasti_file.validate_mutations()
         click.echo("Nastifile is valid.")
     except Exception as e:
         print(e)
