@@ -1,0 +1,14 @@
+---
+hooks:
+  before_script: "tests/hooks/before_script.sh"
+  after_script: "tests/hooks/after_script.sh"
+  auto_cleanup: true
+mutations:
+  - name: "example_mutation"
+    prompt: "Example Mutation"
+    help: "Help for an example mutation"
+    replace: "example text to replace"
+    default: "{{ app_name }}"
+    files: []
+    validation:
+      kind: "slug"

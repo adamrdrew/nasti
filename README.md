@@ -192,6 +192,24 @@ globals:
     help: "The name of your application"
 ```
 
+### Hooks
+You can choose to run scripts, such as shell scripts, before and after your template process. This can be useful for doing things like removing files, moving or renaming files, etc. This is done via a hooks property of the Nastifile
+
+```yaml
+hooks:
+  before_script: "before_nasti.sh"
+  after_script: "after_nasti.sh"
+  auto_cleanup: true
+globals:
+  - name: "app_name"
+    prompt: "App Nme"
+    help: "The name of your application"
+```
+
+The example above will run `before_nasti.sh` before running the globals and mutations, run `after_nasti.sh` after running the globals and mutations, and then delete those scripts.
+
+The value of the script field must be an executable script that can be run with sh.
+
 ## Development
 
 ### Dependency Management & Virtual Environment
