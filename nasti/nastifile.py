@@ -86,8 +86,8 @@ class NastiFile:
 
     def run(self):
         self.load()
-        self.hooks.run_before()
         self.run_greeting()
+        self.hooks.run_before()
         self.run_globals()
         self.run_mutations()
         self.hooks.run_after()
