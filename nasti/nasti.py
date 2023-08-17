@@ -24,7 +24,7 @@ class Nasti:
             self.__create_output_dir()
             self.__copy_source_files()
             self.__load_nasti_file()
-            self.nasti_file.validate()
+            self.nasti_file.validate_mutations()
             self.nasti_file.run()
             self.__clean_up()
             self.__git_init()

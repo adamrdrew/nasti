@@ -61,6 +61,8 @@ class NastiFile:
     GREETING_KEY="greeting"
     HOOKS_KEY="hooks"
 
+    # This is a dictionary of global variables
+    # This is set by running the globals
     globals = {}
 
     def __init__(self, opts={}):
@@ -133,8 +135,8 @@ class NastiFile:
     def get_dir(self):
         return self.os_dep.path.dirname(self.os_dep.path.abspath(self.path))
     
-    # Validate the nastifile syntax
-    def validate(self):
+    # Validate the mutations in the nastifile
+    def validate_mutations(self):
         for mutation in self.__mutations():
              mutation.validate()
     
