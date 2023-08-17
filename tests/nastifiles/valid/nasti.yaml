@@ -4,7 +4,8 @@ mutations:
     prompt: "Example Mutation"
     help: "Help for an example mutation"
     replace: "example text to replace"
+    default: "{{ app_name }}"
     files:
-      - "local_config.json"
+      - "nasti.yaml"
     validation:
       kind: "slug"

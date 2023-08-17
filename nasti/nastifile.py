@@ -51,6 +51,7 @@ class UnmentionedFilesResultItem:
 class NastiFile:
     MUTATIONS_KEY="mutations"
     NAME_KEY="name"
+    DEFAULT_KEY="default"
     PROMPT_KEY="prompt"
     REPLACE_KEY="replace"
     FILES_KEY="files"
@@ -171,10 +172,12 @@ class NastiFile:
             self.FILES_KEY, 
             self.HELP_KEY, 
             self.VALIDATION_KEY,
+            self.DEFAULT_KEY,
         ]
+        # Exit the app
         for key in mutation_config:
             if not key in valid_keys:
-                raise exceptions.NastiFileUnknownKeysException(f"Error: Invalid key in mutation config: {key}")
+                raise exceptions.NastiFileUnknownKeysException(f"Error: invalid key in mutation config: {key}")
 
     def __set_path(self, path):
         if not path:
