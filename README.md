@@ -181,6 +181,17 @@ globals:
       kind: slug
 ```
 
+### Greeting
+You can display a message to the user via a greeting in your Nastifile. This is a good place to warn a user of what to expect or any prerequisite work you expect them to have done before using the template:
+
+```yaml
+greeting: "Welcome to the greeting!"
+globals:
+  - name: "app_name"
+    prompt: "App Nme"
+    help: "The name of your application"
+```
+
 ## Development
 
 ### Dependency Management & Virtual Environment

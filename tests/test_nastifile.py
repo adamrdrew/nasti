@@ -110,3 +110,16 @@ class TestNastiFile(unittest.TestCase):
         nasti_file.load()
         nasti_file.run()
 
+    def test_run_greeting(self):
+        input_dep = func = lambda x: "input_from_user"
+        print_dep = func = lambda x: None
+        nasti_file = NastiFile({
+            "path": "tests/nastifiles/nastifile_greeting",
+            "os_dep": os,
+            "open_dep": open,
+            "input_dep": input_dep,
+            "print_dep": print_dep
+        })
+        nasti_file.load()
+        nasti_file.run_greeting()
+        assert nasti_file.config["greeting"] == "Welcome to the greeting!"
