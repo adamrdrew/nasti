@@ -5,7 +5,7 @@ import yaml
 from nasti.mutation import Mutation
 from nasti.globals import Global
 import nasti.exceptions as exceptions
-
+from nasti.hooks import Hooks
 
 # This class is used to store the results of the find command
 class UnmentionedFilesResult:
@@ -58,6 +58,7 @@ class NastiFile:
     VALIDATION_KEY="validation"
     GLOBALS_KEY="globals"
     GREETING_KEY="greeting"
+    HOOKS_KEY="hooks"
 
     globals = {}
 
@@ -65,7 +66,8 @@ class NastiFile:
         # Dependency injection
         self.os_dep = opts["os_dep"]
         self.open_dep = opts["open_dep"]
-
+        # Null object pattern
+        self.hooks = Hooks({})
         if "print_dep" in opts:
             self.print_dep = opts["print_dep"]
         else:
@@ -79,17 +81,27 @@ class NastiFile:
 
     def load(self):
         self.__verify_exists()
+        self.init_config()
+        self.init_hooks()
+
+    def run(self):
+        self.load()
+        self.hooks.run_before()
+        self.run_greeting()
+        self.run_globals()
+        self.run_mutations()
+        self.hooks.run_after()
+
+    def init_hooks(self):
+        if self.HOOKS_KEY in self.config:
+            self.hooks = Hooks(self.config[self.HOOKS_KEY])
+
+    def init_config(self):
         with self.open_dep(self.path, 'r') as file:
             try:
                 self.config = yaml.load(file, Loader=yaml.SafeLoader)
             except yaml.YAMLError as e:
                 raise exceptions.NastiFileInvalidYamlException(f"Error: Unable to load {self.path}.")
-
-    def run(self):
-        self.load()
-        self.run_greeting()
-        self.run_globals()
-        self.run_mutations()
 
     def run_greeting(self):
         if self.GREETING_KEY in self.config:

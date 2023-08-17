@@ -60,3 +60,10 @@ class GlobalRequiredKeysMissingException(Exception):
 
 class GlobalTooManyInputTriesException(Exception):
     pass
+
+class HooksScriptNotFound(Exception):
+    pass
+class HooksScriptExecutionFailed(Exception):
+    pass
+class HooksCleanupFailed(Exception):
+    pass
