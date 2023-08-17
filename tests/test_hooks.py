@@ -1,6 +1,7 @@
 import unittest
 from nasti.hooks import Hooks
 import nasti.exceptions as exceptions
+from nasti.nastifile import NastiFile
 import os
 
 class TestHooks(unittest.TestCase):
@@ -134,3 +135,26 @@ class TestHooks(unittest.TestCase):
         self.assertEqual(hooks.auto_cleanup, False)
         with self.assertRaises(exceptions.HooksScriptExecutionFailed):
             hooks.run_before()
+    
+    def test_hooks_end_to_end(self):
+        # Create a copy of the success script called before
+        os.system("cp tests/hooks/success.sh tests/hooks/before_script.sh")
+        # Create a copy of the success script called after
+        os.system("cp tests/hooks/success.sh tests/hooks/after_script.sh")
+
+        input_dep = func = lambda x: "input_from_user"
+        print_dep = func = lambda x: None
+        nasti_file = NastiFile({
+            "path": "tests/hooks",
+            "os_dep": os,
+            "open_dep": open,
+            "input_dep": input_dep,
+            "print_dep": print_dep
+        })
+        nasti_file.load()
+        nasti_file.run()
+
+        # verify the before script was cleaned up
+        self.assertEqual(os.path.exists("tests/hooks/before_script.sh"), False)
+        # verify the after script was cleaned up
+        self.assertEqual(os.path.exists("tests/hooks/after_script.sh"), False)
