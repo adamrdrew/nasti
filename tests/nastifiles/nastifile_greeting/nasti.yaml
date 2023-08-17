@@ -1,0 +1,15 @@
+---
+greeting: "Welcome to the greeting!"
+globals:
+  - name: "app_name"
+    prompt: "App Nme"
+    help: "The name of your application"
+mutations:
+  - name: "example_mutation"
+    prompt: "Example Mutation"
+    help: "Help for an example mutation"
+    replace: "example text to replace"
+    default: "{{ app_name }}"
+    files: []
+    validation:
+      kind: "slug"

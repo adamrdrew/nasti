@@ -57,6 +57,7 @@ class NastiFile:
     HELP_KEY="help"
     VALIDATION_KEY="validation"
     GLOBALS_KEY="globals"
+    GREETING_KEY="greeting"
 
     globals = {}
 
@@ -86,9 +87,13 @@ class NastiFile:
 
     def run(self):
         self.load()
+        self.run_greeting()
         self.run_globals()
         self.run_mutations()
 
+    def run_greeting(self):
+        if self.GREETING_KEY in self.config:
+            self.print_dep(self.config[self.GREETING_KEY])
 
     def run_mutations(self):
         working_dir = self.get_dir()
