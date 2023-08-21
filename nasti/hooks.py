@@ -29,11 +29,10 @@ class Hooks:
 
     def __run_script(self, script):
         # Verify the script exists
-        full_path_for_script = self.os_dep.path.join(self.working_dir, script)
-        if not self.os_dep.path.exists(full_path_for_script):
-            raise exceptions.HooksScriptNotFound(f"Hooks script not found: {full_path_for_script}")
+        if not self.os_dep.path.exists(script):
+            raise exceptions.HooksScriptNotFound(f"Hooks script not found: {script}")
         try:
-            result = self.os_dep.system(f"sh {full_path_for_script} > /dev/null 2>&1")
+            result = self.os_dep.system(f"sh {script} > /dev/null 2>&1")
         except Exception as e:
             raise exceptions.HooksScriptExecutionFailed(f"Hooks script failed: {e}")
         if result != 0:
@@ -43,8 +42,7 @@ class Hooks:
         if self.auto_cleanup == False:
             return
         try:
-            full_path_for_script = self.os_dep.path.join(self.working_dir, script)
-            result = self.os_dep.system(f"{self.cleanup_command} {full_path_for_script} > /dev/null 2>&1")
+            result = self.os_dep.system(f"{self.cleanup_command} {script} > /dev/null 2>&1")
         except Exception as e:
             raise exceptions.HooksCleanupFailed(f"Hooks cleanup failed: {e}")
         if result != 0:
@@ -53,8 +51,11 @@ class Hooks:
     def __run_hook(self, hook):
         if hook == False:
             return hook
+        self.origina_cwd = self.os_dep.getcwd()
+        self.os_dep.chdir(self.working_dir)
         self.__run_script(hook)
         self.cleanup(hook)
+        self.os_dep.chdir(self.origina_cwd)
         return True
 
     def run_before(self):
