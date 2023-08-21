@@ -1,7 +1,7 @@
 ---
 hooks:
-  before_script: "tests/hooks/before_script.sh"
-  after_script: "tests/hooks/after_script.sh"
+  before_script: "before_script.sh"
+  after_script: "after_script.sh"
   auto_cleanup: true
 mutations:
   - name: "example_mutation"

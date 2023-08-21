@@ -79,8 +79,9 @@ class NastiFile:
             self.input_dep = opts["input_dep"]
         else:
             self.input_dep = input
-
+        self.working_dir = opts["path"]
         self.__set_path(opts["path"])
+        
 
     def load(self):
         self.__verify_exists()
@@ -97,6 +98,8 @@ class NastiFile:
 
     def init_hooks(self):
         if self.HOOKS_KEY in self.config:
+            hooks_opts = self.config[self.HOOKS_KEY]
+            hooks_opts["working_dir"] = self.working_dir
             self.hooks = Hooks(self.config[self.HOOKS_KEY])
 
     def init_config(self):
