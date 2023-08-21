@@ -30,9 +30,7 @@ def process(source, git):
         })
         nasti.run()
     except Exception as e:
-        print(e)
-        sys.exit(1)
-
+        print(f"    Error: {e}")
 
 @click.command()
 @click.argument("path", required=False)
@@ -50,7 +48,6 @@ def validate(path):
         click.echo("Nastifile is valid.")
     except Exception as e:
         print(e)
-        sys.exit(1)
 
 @click.command()
 @click.argument("path", required=False)
@@ -67,7 +64,6 @@ def find(path):
         click.echo(unmentioned_files.get_report())
     except Exception as e:
         print(e)
-        sys.exit(1)
 
 cli.add_command(process)
 cli.add_command(validate)
