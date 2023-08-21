@@ -26,13 +26,13 @@ class Hooks:
     def __run_script(self, script):
         # Verify the script exists
         if not self.os_dep.path.exists(script):
-            raise exceptions.HooksScriptNotFound()
+            raise exceptions.HooksScriptNotFound("Hooks script not found: {script}")
         try:
             result = self.os_dep.system(f"sh {script} > /dev/null 2>&1")
         except Exception as e:
-            raise exceptions.HooksScriptExecutionFailed(e)
+            raise exceptions.HooksScriptExecutionFailed(f"Hooks script failed: {e}")
         if result != 0:
-            raise exceptions.HooksScriptExecutionFailed()
+            raise exceptions.HooksScriptExecutionFailed("Hooks script failed.")
 
     def cleanup(self, script):
         if self.auto_cleanup == False:
@@ -40,9 +40,9 @@ class Hooks:
         try:
             result = self.os_dep.system(f"{self.cleanup_command} {script} > /dev/null 2>&1")
         except Exception as e:
-            raise exceptions.HooksCleanupFailed(e)
+            raise exceptions.HooksCleanupFailed(f"Hooks cleanup failed: {e}")
         if result != 0:
-            raise exceptions.HooksCleanupFailed()
+            raise exceptions.HooksCleanupFailed("Hooks cleanup failed.")
 
     def __run_hook(self, hook):
         if hook == False:

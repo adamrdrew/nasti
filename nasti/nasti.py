@@ -32,8 +32,7 @@ class Nasti:
             self.handler.clean_up()
             self.__delete_output_dir()
             # Print a pretty error
-            self.print_func(f"An error ocurred processing the template.")
-            self.print_func(f"Error: {e}")
+            self.print_func(f"An error ocurred processing the template: ")
             raise e
 
     def __clean_up(self):
