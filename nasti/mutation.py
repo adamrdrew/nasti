@@ -157,11 +157,8 @@ class Mutation:
             self.print_dep(self.help)
         # If there is a default value, print it
         if self.default:
-            default = self.render_default_template()
-            self.print_dep(f"Enter for Default: {default}")
+            self.print_dep(f"Press enter for Default: {self.render_default_template()}")
         user_input = self.__get_user_input()
-        if user_input == "":
-            user_input = self.render_default_template()
         try:
             self.__replace_text_in_files(user_input)
         except Exception as e:
@@ -176,6 +173,9 @@ class Mutation:
             tries += 1
             if tries > max_tries:
                 raise exceptions.MutationTooManyInputTriesException(f"Error: Too many invalid inputs.")
+            if self.default and user_input == "":
+                user_input = self.render_default_template()
+                break
             if self.__is_input_valid(user_input):
                 break
             self.print_dep(f"Invalid input.")
