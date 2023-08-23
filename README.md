@@ -231,8 +231,8 @@ You can run tests with `make test` and generate a codecoverage report with `make
 I barely understand Python packaging publishing. Describing it as a complex mess would be an understatement. I think I have it working as simply as possible, but I had to do so much trial and error I don't know whether what seems to work on my machine will work on someone else's. Help very much welcome on this!
 
 1. Exit the venv if you are in it
-2. Bump the version in `setup.cfg`
-2. Install build deps with `make install-build-deps`
+2. Bump the version in `setup.py`
+2. (If you need to) Install build deps with `make install-build-deps`
 3. Build `make build-app`
 4. Publish `make publish`
 
