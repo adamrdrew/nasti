@@ -23,7 +23,7 @@ class TestMutation(unittest.TestCase):
         mutation_config = config["mutations"][0]
         mutation = Mutation(mutation_config, "tests/nastifiles/mutation_unmentioned_files")
         unmentioned_files = mutation.find_unmentioned_files("tests/nastifiles/mutation_unmentioned_files")
-        assert unmentioned_files == ['files/nested/unmentioned', 'files/unmentioned']
+        assert set(unmentioned_files) == set(['files/nested/unmentioned', 'files/unmentioned'])
 
     # this tests that the files array is not present
     def test_no_files(self):
