@@ -10,6 +10,7 @@ validators = "*"
 pytest = "*"
 coverage = "*"
 jinja2 = "*"
+rich = "*"
 
 [dev-packages]
 vistir = "0.6.1"
