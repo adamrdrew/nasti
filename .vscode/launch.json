@@ -1,0 +1,34 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Nasti",
+            "type": "python",
+            "request": "launch",
+            "program": "${cwd}/./nasti.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "process",
+                "/home/adamdrew/Development/consoledot-go-starter-app/",
+            ],
+
+        },
+        {
+            "name": "Python: Unittest",
+            "type": "python",
+            "request": "launch",
+            "module": "unittest",
+            "args": [
+                "discover",
+                "."
+            ],
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+        }
+        
+    ]
+}
