@@ -6,7 +6,6 @@
 # NASTI
 NASTI is A Strange Templating Implementation.
 
-
 NASTI allows you to create project templates, similar to tools like [Cookiecutter](https://github.com/cookiecutter/cookiecutter). What makes NASTI unique is that your project templates remain as valid, living code. You can run, test, and debug your project templates just like any other application while still enabling end users to bootstrap new projects from your template.
 
 ## Features
