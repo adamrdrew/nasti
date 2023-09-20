@@ -32,7 +32,7 @@ class TestValidation(unittest.TestCase):
         validation = Validation({
             "kind": "slug",
         })
-        assert validation.validate("coheed_and_cambria") == True
+        assert validation.validate("coheed-and-cambria") == True
     
     def test_invalid_kind(self):
         validation = Validation({
