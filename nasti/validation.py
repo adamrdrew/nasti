@@ -28,17 +28,17 @@ class Validation:
         if self.KIND_KEY in validation_config:
             self.kind = validation_config[self.KIND_KEY]
     
-    def validate(self, input):
+    def validate(self, input_text):
         if self.regex:
-            return self.__is_valid_regex(input)
+            return self.__is_valid_regex(input_text)
         if self.kind:
-            return self.__is_valid_kind(input)
+            return self.__is_valid_kind(input_text)
 
-    def __is_valid_regex(self, input):
-        return bool(re.match(self.regex, input))
+    def __is_valid_regex(self, input_text):
+        return bool(re.match(self.regex, input_text))
     
-    def __is_valid_kind(self, input):
-        return bool(self.kinds[self.kind](input))
+    def __is_valid_kind(self, input_text):
+        return bool(self.kinds[self.kind](input_text))
 
     def __verify_known_kind(self, kind):
         if not kind in self.kinds:

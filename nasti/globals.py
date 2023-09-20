@@ -41,9 +41,10 @@ class Global:
         tries = 0
         max_tries = 3
         while True:
+            self.print_dep(f"{self.prompt}")
             if self.help:
                 self.print_dep(self.help)
-            self.value = self.input_dep(f"{self.prompt}: ")
+            self.value = self.input_dep("> ")
             if self.validate():
                 break
             tries += 1

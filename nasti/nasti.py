@@ -14,7 +14,7 @@ class Nasti:
 
         self.source = opts["source"]
         self.handler = None
-        self.print_func = opts["print_func"]
+        self.print_dep = opts["print_dep"]
         self.output_dir = ""
         self.git_init = opts["git_init"]
 
@@ -32,7 +32,7 @@ class Nasti:
             self.handler.clean_up()
             self.__delete_output_dir()
             # Print a pretty error
-            self.print_func(f"An error ocurred processing the template: ")
+            self.print_dep(f"An error ocurred processing the template: ")
             raise e
 
     def __clean_up(self):
@@ -55,12 +55,12 @@ class Nasti:
             try:
                 # Attempt to create the directory
                 self.os_dep.makedirs(self.output_dir)
-                self.print_func(f"Directory '{self.output_dir}' created successfully.")
+                self.print_dep(f"Directory '{self.output_dir}' created successfully.")
                 break
             except OSError as e:
                 # Handle error if directory creation fails
-                self.print_func(f"Error: {e}")
-                self.print_func("Please check the directory name and try again.")
+                self.print_dep(f"Error: {e}")
+                self.print_dep("Please check the directory name and try again.")
                 attemps += 1
                 if attemps >= max_attempts:
                     raise Exception("Error: Something really weird is up. ")
@@ -79,11 +79,12 @@ class Nasti:
             "path": self.output_dir,
             "os_dep": self.os_dep,
             "open_dep": self.open_dep,
+            "print_dep": self.print_dep,
         })
         self.nasti_file.load()
 
     def __get_source(self):
-        resolver = SourceHandlerResolver(self.source, self.help_text, self.os_dep, self.print_func)
+        resolver = SourceHandlerResolver(self.source, self.help_text, self.os_dep, self.print_dep)
         self.handler = resolver.resolve()
         self.handler.run()
 

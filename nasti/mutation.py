@@ -153,11 +153,12 @@ class Mutation:
 
     def run(self):
         # Prompt the user for input
+        self.print_dep(f"{self.prompt}")
         if self.help:
             self.print_dep(self.help)
         # If there is a default value, print it
         if self.default:
-            self.print_dep(f"Press enter for Default: {self.render_default_template()}")
+            self.print_dep(f"[italic]Press enter for Default:[/italic] [blue]{self.render_default_template()}[/blue]")
         user_input = self.__get_user_input()
         try:
             self.__replace_text_in_files(user_input)
@@ -169,7 +170,7 @@ class Mutation:
         max_tries = 3
         user_input = ""
         while True:
-            user_input = self.input_dep(f"{self.prompt}> ")
+            user_input = self.input_dep("> ")
             tries += 1
             if tries > max_tries:
                 raise exceptions.MutationTooManyInputTriesException(f"Error: Too many invalid inputs.")
@@ -178,7 +179,7 @@ class Mutation:
                 break
             if self.__is_input_valid(user_input):
                 break
-            self.print_dep(f"Invalid input.")
+            self.print_dep("[red]:x: Invalid input.[/red]")
         return user_input
 
     def __replace_text_in_files(self, user_input):
@@ -191,12 +192,12 @@ class Mutation:
             with self.open_dep(file_with_path, 'w') as f:
                 f.write(file_text)
     
-    def __is_input_valid(self, input):
+    def __is_input_valid(self, user_input):
         # If there is no validation, the input is valid
         if not self.validation:
             return True
         # Validate the input by testing it against the validations
-        return self.validation.validate(input)
+        return self.validation.validate(user_input)
 
     def __get_file_full_path(self, file):
         return self.path + '/' + file

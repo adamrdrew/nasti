@@ -4,6 +4,7 @@ import os
 
 from nasti.nastifile import NastiFile
 from nasti.nasti import Nasti
+import rich
 
 @click.group()
 def cli():
@@ -21,7 +22,7 @@ def process(source, git):
     try:
         nasti = Nasti({
             "source": source, 
-            "print_func": click.echo, 
+            "print_dep": rich.print, 
             "git_init": git, 
             "help_text": cli.get_help(click.Context(cli)),
             "os_dep": os,
@@ -39,6 +40,7 @@ def validate(path):
         path = "."
     try:
         nasti_file = NastiFile({
+            "print_dep": rich.print,
             "path": path,
             "os_dep": os,
             "open_dep": open,
@@ -56,6 +58,7 @@ def find(path):
         path = "."
     try:
         nasti_file = NastiFile({
+            "print_dep": rich.print,
             "path": path,
             "os_dep": os,
             "open_dep": open,
