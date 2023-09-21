@@ -32,6 +32,12 @@ def process(source, git):
         nasti.run()
     except Exception as e:
         print(f"    Error: {e}")
+    except KeyboardInterrupt:
+        # Check if the output directory exists
+        if nasti.output_dir:
+            print("Deleting output directory...")
+            nasti.delete_output_dir()
+            print("Exiting.")
 
 @click.command()
 @click.argument("path", required=False)
