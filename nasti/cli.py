@@ -19,7 +19,9 @@ def cli():
 
 @click.command()
 @click.argument("source", required=True)
+@click.argument("dest_dir", required=False)
 @click.option("--git", "-g", help="Create a git repo in the new project. Default is True.", is_flag=True, default=True )
+@click.option("--defaults", "-d", help="Accept all defaults. Default is False", is_flag=True, default=False )
 def process(source, git):
     try:
         history = InMemoryHistory()
@@ -59,9 +61,10 @@ def validate(path):
         })
         nasti_file.load()
         nasti_file.validate_mutations()
-        click.echo("Nastifile is valid.")
+        rich.print("[green]:heavy_check_mark: Nastifile is valid.[/green]")
     except Exception as e:
-        print(e)
+        rich.print("[red]:x: Nastifile is invalid.[/red]")
+        rich.print(e)
 
 @click.command()
 @click.argument("path", required=False)

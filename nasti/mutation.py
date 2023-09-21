@@ -102,7 +102,7 @@ class Mutation:
                 continue
 
             # look into the file and see if the text to be replaced is there
-            with self.open_dep(file_full_path, 'r') as f:
+            with self.open_dep(file_full_path, 'r', errors='replace') as f:
                 if re.search(self.replace, f.read()):
                     # if the text to be replaced is there add it to the list
                     unmentioned_files.append(relative_file_path)
