@@ -38,7 +38,7 @@ $ nasti process --git=false ~/Development/some-template
 # Accept all default values for mutations that have them
 $ nasti process -d ~/Development/some-template
 # Silent mode
-$ nasti process -s app_name="My Great App" contact_name="Adam Drew" api_path="my-api" contact_email="adam@email.net" ~/Development/some-template great_new_app
+$ nasti process -s "app_name='My Great App',contact_name='Adam Drew',api_path='my-api',contact_email='adam@email.net'" ~/Development/some-template great_new_app
 ```
 
 ## Template Creation
@@ -255,7 +255,7 @@ Silent mode allows you to create a project from a template without having to use
 To invoke silent mode you use the `-s` switch on the command line and specify a the names and values for the prompts you want to populate:
 
 ```bash
-$ nasti process -s app_name="My Great App" contact_name="Adam Drew" api_path="my-api" contact_email="adam@email.net" ~/Development/some-template great_new_app
+$ nasti process -s "app_name='My Great App',contact_name='Adam Drew',api_path='my-api',contact_email='adam@email.net'" ~/Development/some-template great_new_app
 ```
 
 You must specify names and values for all of the mutations and globals in the template that don't have defaults. Silent mode will use defaults for all mutations except those that you specify on the command line. In the example above we can image that `app_name` and `contact_name` are globals, and so need to be specified, but `api_path` has a default but we're overriding it. In that way silent mode operates like accept defaults mode but with overrides. Also, you must specify an output directory when using silent mode.

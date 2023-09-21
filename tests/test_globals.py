@@ -14,7 +14,7 @@ class TestGlobal(unittest.TestCase):
         }
         global_obj = Global(global_config, input_dep=input, print_dep=print)
         self.assertEqual(global_obj.name, "test")
-    
+
     def test_global_with_required_config(self):
         global_config = {
             "name": "test",
@@ -72,6 +72,20 @@ class TestGlobal(unittest.TestCase):
         global_obj.populate()
         self.assertTrue(global_obj.validate())
 
+    def test_global_with_validation_silent(self):
+        global_config = {
+            "name": "test",
+            "prompt": "test prompt",
+            "validation": {
+                "kind": "url"
+            }
+        }
+        input_dep = func = lambda x: None
+        print_dep = func = lambda x: None
+        global_obj = Global(global_config, input_dep=input_dep, print_dep=print_dep, silent_mode=True, silent_opts={"test": "http://www.google.com"})
+        global_obj.populate()
+        self.assertTrue(global_obj.validate())
+
     def test_global_with_validation_failure(self):
         global_config = {
             "name": "test",
@@ -80,9 +94,23 @@ class TestGlobal(unittest.TestCase):
                 "kind": "url"
             }
         }
-        input_dep = func = lambda x: "http://www.google.com"
+        input_dep = func = lambda x: "https://www.google.com"
         print_dep = func = lambda x: None
         global_obj = Global(global_config, input_dep=input_dep, print_dep=print_dep)
         global_obj.populate()
         global_obj.value = "bogus"
         self.assertFalse(global_obj.validate())
+
+    def test_global_with_validation_failure_silent(self):
+        global_config = {
+            "name": "test",
+            "prompt": "test prompt",
+            "validation": {
+                "kind": "url"
+            }
+        }
+        input_dep = func = lambda x: None
+        print_dep = func = lambda x: None
+        global_obj = Global(global_config, input_dep=input_dep, print_dep=print_dep, silent_mode=True, silent_opts={"test": "coheed and cambria"})
+        with self.assertRaises(exceptions.GlobalSilentModeException):
+            global_obj.populate()
