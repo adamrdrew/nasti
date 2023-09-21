@@ -29,15 +29,15 @@ $ pip install nasti
 # Process a template on github
 $ nasti process git@github.com:somedev/some-template.git
 # Or gitlab, or any other git repo you can clone
-$ nasti process git@gitlab.mycomand.com:someorg/some-template.git
+$ nasti process git@gitlab.mycompany.com:someorg/some-template.git
 # Process a local template
 $ nasti process ~/Development/some-template
 # Specify an output directory
 $ nasti process ~/Development/some-template great_new_app
 # Don't let NASTI greate your new project's repo
-$ nasti process --git=false ~/Development/some-template
+$ nasti process --git false ~/Development/some-template
 # Accept all default values for mutations that have them
-$ nasti process -d ~/Development/some-template
+$ nasti process -d ~/Development/some-template great_new_app
 # Silent mode
 $ nasti process -s "app_name='My Great App',contact_name='Adam Drew',api_path='my-api',contact_email='adam@email.net'" ~/Development/some-template great_new_app
 ```
@@ -50,7 +50,7 @@ Simply add a nastifile called `nasti.yaml` to the root of your project and add s
 ```yaml
 ---
 mutations:
-    # Name is an ID used internally and will appear in error messages
+    # Identifies your promp internally, in error messages, and in silent mode
   - name: "github"
     # Prompt to present to the template user
     prompt: "Github Repo"
@@ -77,16 +77,18 @@ The mutation format is very simple, and you can add as many mutations as you'd l
 Next verify your nastifile:
 ```bash
 $ nasti validate
-Nastifile is valid
+✔ Nastifile is valid.
 ```
 
 If there's something wrong with your nastifile, such as a mutation being applied to a file that doesn't contain the replacement text, or an omitted field, `validate` will tell you:
 
 ```bash
 $ nasti validate
-Error: mutation email file: main.go at: /home/adamdrew/Development/someapp/main.go does not contain somedev@corpo.net 
+❌ Nastifile is invalid.
+Error: mutation email file: README.md at: /home/adamdrew/Development/someapp/README.md does not contain addrew@corpo.net 
 
-$ nasti validate 
+$ nasti validate
+❌ Nastifile is invalid. 
 Error: Invalid mutation config: {'name': 'quay', 'help': 'The quay repo is the location of your container image. Should be in the form of quay.io/username/repo', 'replace': 'quay.io/someorg/some-project', 'files': ['Makefile'], 'validations': ['^quay\\.io/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$']} missing 'prompt'
 ```
 
@@ -97,10 +99,13 @@ Mutations are file-scoped, meaning they'll only replace text in files in the mut
 
 ```
 $ nasti find tests/nastifiles/mutation_unmentioned_files/
-The following mutations match files not listed in the nastifile:
+Searching for files that match mutations but aren't mentioned in Nastifile...
+
+❗ The following mutations match files not listed in the nastifile:
 
 Mutation example_mutation matches but does not reference:
-    files/nested/unmentioned    files/unmentioned
+    • files/nested/unmentioned
+    • files/unmentioned
 ```
 
 In the example above the nastifile has a mutation called `example_mutation` that would match the files `files/nested/unmentioned` and `files/unmentioned` but those files don't appear in the `example_mutation` file list.
@@ -169,7 +174,7 @@ mutations:
     prompt: "Example Mutation"
     help: "Help for an example mutation"
     replace: "example text to replace"
-    default: "{{ app_name.lower().split(' ') | join('_') }}"
+    default: "{{ app_name.lower().split(' ') | join('-') }}"
     files: []
     validation:
       kind: "slug"
