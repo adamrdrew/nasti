@@ -22,7 +22,7 @@ def cli():
 @click.argument("dest_dir", required=False)
 @click.option("--git", "-g", help="Create a git repo in the new project. Default is True.", is_flag=True, default=True )
 @click.option("--defaults", "-d", help="Accept all defaults. Default is False", is_flag=True, default=False )
-def process(source, git):
+def process(source, git, defaults, dest_dir):
     try:
         history = InMemoryHistory()
         session = PromptSession(history=history)
@@ -33,7 +33,9 @@ def process(source, git):
             "help_text": cli.get_help(click.Context(cli)),
             "os_dep": os,
             "open_dep": open,
-            "input_dep": session.prompt
+            "input_dep": session.prompt,
+            "accept_defaults": defaults,
+            "output_dir": dest_dir,
         })
         nasti.run()
     except Exception as e:
