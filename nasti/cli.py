@@ -19,8 +19,10 @@ def cli():
 
 @click.command()
 @click.argument("source", required=True)
+@click.argument("dest_dir", required=False)
 @click.option("--git", "-g", help="Create a git repo in the new project. Default is True.", is_flag=True, default=True )
-def process(source, git):
+@click.option("--defaults", "-d", help="Accept all defaults. Default is False", is_flag=True, default=False )
+def process(source, git, defaults, dest_dir):
     try:
         history = InMemoryHistory()
         session = PromptSession(history=history)
@@ -31,7 +33,9 @@ def process(source, git):
             "help_text": cli.get_help(click.Context(cli)),
             "os_dep": os,
             "open_dep": open,
-            "input_dep": session.prompt
+            "input_dep": session.prompt,
+            "accept_defaults": defaults,
+            "output_dir": dest_dir,
         })
         nasti.run()
     except Exception as e:
@@ -59,13 +63,15 @@ def validate(path):
         })
         nasti_file.load()
         nasti_file.validate_mutations()
-        click.echo("Nastifile is valid.")
+        rich.print("[green]:heavy_check_mark: Nastifile is valid.[/green]")
     except Exception as e:
-        print(e)
+        rich.print("[red]:x: Nastifile is invalid.[/red]")
+        rich.print(e)
 
 @click.command()
 @click.argument("path", required=False)
 def find(path):
+    rich.print("[blue]Searching for files that match mutations but aren't mentioned in Nastifile...[/blue]")
     if not path:
         path = "."
     try:
@@ -76,9 +82,9 @@ def find(path):
             "open_dep": open,
         })
         unmentioned_files = nasti_file.find_unmentioned_files()
-        click.echo(unmentioned_files.get_report())
+        rich.print(unmentioned_files.get_report())
     except Exception as e:
-        print(e)
+        rich.print(e)
 
 cli.add_command(process)
 cli.add_command(validate)

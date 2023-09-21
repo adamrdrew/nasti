@@ -25,12 +25,13 @@ class Mutation:
     DEFAULT_KEY = "default"
     GLOBALS_KEY = "globals"
 
-    def __init__(self, mutation_config: dict, path, os_dep=os, open_dep=open, input_dep=input, print_dep=print):
+    def __init__(self, mutation_config: dict, path, os_dep=os, open_dep=open, input_dep=input, print_dep=print, accept_defaults=False):
         # Dependency injection
         self.os_dep = os_dep
         self.open_dep = open_dep
         self.input_dep = input_dep
         self.print_dep = print_dep
+        self.accept_defaults = accept_defaults
         # Required fields
         try:
             self.name        = mutation_config[self.NAME_KEY]
@@ -102,7 +103,7 @@ class Mutation:
                 continue
 
             # look into the file and see if the text to be replaced is there
-            with self.open_dep(file_full_path, 'r') as f:
+            with self.open_dep(file_full_path, 'r', errors='replace') as f:
                 if re.search(self.replace, f.read()):
                     # if the text to be replaced is there add it to the list
                     unmentioned_files.append(relative_file_path)
@@ -152,6 +153,11 @@ class Mutation:
         
 
     def run(self):
+        # Handle accept defaults
+        if self.accept_defaults and self.default:
+            self.print_dep(f"[green]:heavy_check_mark:[/green] Using [green]{self.render_default_template()}[/green] for [blue]{self.name}[/blue] ")
+            self.__replace_text_in_files(self.render_default_template())
+            return
         # Prompt the user for input
         self.print_dep(f"{self.prompt}")
         if self.help:

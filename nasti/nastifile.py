@@ -21,7 +21,7 @@ class UnmentionedFilesResult:
         if len(self.results) == 0:
             return ""
         report = ""
-        report += "The following mutations match files not listed in the nastifile:\n"
+        report += "\n:exclamation_mark: The following mutations [green]match[/green] files [red]not listed[/red] in the nastifile:\n"
         for result in self.results:
             report += result.get_report()
         return report
@@ -37,9 +37,9 @@ class UnmentionedFilesResultItem:
 
     def get_report(self):
         report = ""
-        report += f"\nMutation {self.mutation.name} matches but does not reference:\n"
+        report += f"\nMutation [magenta]{self.mutation.name}[/magenta] [green]matches[/green] but [red]does not[/red] reference:"
         for file in self.files:
-            report += f"    {file}"
+            report += f"\n    • [blue]{file}[/blue]"
         return report
     
     def get_files(self):
@@ -69,6 +69,9 @@ class NastiFile:
         # Dependency injection
         self.os_dep = opts["os_dep"]
         self.open_dep = opts["open_dep"]
+        self.accept_defaults = False
+        if "accept_defaults" in opts:
+            self.accept_defaults = opts["accept_defaults"]
         # Null object pattern
         self.hooks = Hooks({})
         if "print_dep" in opts:
@@ -118,7 +121,7 @@ class NastiFile:
         for mutation_config in self.config[self.MUTATIONS_KEY]:
             self.print_dep("")
             mutation_config["globals"] = self.globals
-            mutation = Mutation(mutation_config, working_dir, os, open, self.input_dep, self.print_dep)
+            mutation = Mutation(mutation_config, working_dir, os, open, self.input_dep, self.print_dep, self.accept_defaults)
             mutation.run()
 
     def run_globals(self):
