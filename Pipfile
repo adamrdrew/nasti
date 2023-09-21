@@ -11,6 +11,7 @@ pytest = "*"
 coverage = "*"
 jinja2 = "*"
 rich = "*"
+prompt-toolkit = "*"
 
 [dev-packages]
 vistir = "0.6.1"

@@ -5,6 +5,8 @@ import os
 from nasti.nastifile import NastiFile
 from nasti.nasti import Nasti
 import rich
+from prompt_toolkit import PromptSession
+from prompt_toolkit.history import InMemoryHistory
 
 @click.group()
 def cli():
@@ -20,6 +22,8 @@ def cli():
 @click.option("--git", "-g", help="Create a git repo in the new project. Default is True.", is_flag=True, default=True )
 def process(source, git):
     try:
+        history = InMemoryHistory()
+        session = PromptSession(history=history)
         nasti = Nasti({
             "source": source, 
             "print_dep": rich.print, 
@@ -27,7 +31,7 @@ def process(source, git):
             "help_text": cli.get_help(click.Context(cli)),
             "os_dep": os,
             "open_dep": open,
-            "input_dep": input
+            "input_dep": session.prompt
         })
         nasti.run()
     except Exception as e:
