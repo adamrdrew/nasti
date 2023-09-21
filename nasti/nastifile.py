@@ -82,6 +82,12 @@ class NastiFile:
             self.input_dep = opts["input_dep"]
         else:
             self.input_dep = input
+        self.silent_opts = {}
+        self.silent_mode = False
+        if "silent_opts" in opts:
+            self.silent_opts = opts["silent_opts"]
+        if "silent_mode" in opts:
+            self.silent_mode = opts["silent_mode"]
         self.working_dir = opts["path"]
         self.__set_path(opts["path"])
         

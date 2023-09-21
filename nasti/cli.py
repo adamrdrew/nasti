@@ -42,10 +42,14 @@ def cli():
 @click.option("--silent", "-s", help="Silent mode with key=value pairs separated by commas.")
 def process(source, git, defaults, dest_dir, silent):
     # Convert silent string to a dictionary
+    silent_mode = False
     silent_opts = {}
     if silent:
         try:
             silent_opts = parse_silent_opts(silent)
+            if len(silent_opts) == 0:
+                raise ValueError("Silent mode key/value pairs cannot be empty.")
+            silent_mode = True
         except ValueError as e:
             rich.print("[red]:stop_sign:[bold] Error processing silent mode key/value pairs[/bold][red]")
             rich.print(e)
@@ -64,6 +68,7 @@ def process(source, git, defaults, dest_dir, silent):
             "input_dep": session.prompt,
             "accept_defaults": defaults,
             "output_dir": dest_dir,
+            "silent_mode": silent_mode,
             "silent_opts": silent_opts,
         })
         nasti.run()

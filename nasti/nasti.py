@@ -18,6 +18,13 @@ class Nasti:
         self.output_dir = opts["output_dir"]
         self.git_init = opts["git_init"]
         self.accept_defaults = False
+
+        self.silent_opts = {}
+        self.silent_mode = False
+        if "silent_opts" in opts:
+            self.silent_opts = opts["silent_opts"]
+        if "silent_mode" in opts:
+            self.silent_mode = opts["silent_mode"]
         if "accept_defaults" in opts:
             self.accept_defaults = opts["accept_defaults"]
 
@@ -87,6 +94,8 @@ class Nasti:
             "print_dep": self.print_dep,
             "input_dep": self.input_dep,
             "accept_defaults": self.accept_defaults,
+            "silent_mode": self.silent_mode,
+            "silent_opts": self.silent_opts,
         })
         self.nasti_file.load()
 
