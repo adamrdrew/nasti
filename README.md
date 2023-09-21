@@ -15,6 +15,7 @@ NASTI allows you to create project templates, similar to tools like [Cookiecutte
 * Tightly scoped single-file template definition
 * Powerful template and project validation system
 * Rich text markup including colors, styles, and emoji
+* Interactive and silent modes
 * Super easy, barely an inconvenience
 
 ## Installation
