@@ -83,7 +83,7 @@ class TestNastiFile(unittest.TestCase):
         assert len(unmentioned_files.get_report()) == 0
     
     def test_globals(self):
-        input_dep = func = lambda x: "test_global_value"
+        input_dep = func = lambda x: "test-global-value"
         print_dep = func = lambda x: None
         nasti_file = NastiFile({
             "path": "tests/nastifiles/nastifile_globals",
@@ -95,10 +95,10 @@ class TestNastiFile(unittest.TestCase):
         nasti_file.load()
         nasti_file.run()
         global_obj = nasti_file.get_global("app_name")
-        assert global_obj  == "test_global_value"
+        assert global_obj  == "test-global-value"
     
     def test_default(self):
-        input_dep = func = lambda x: "input_from_user"
+        input_dep = func = lambda x: "input-from-user"
         print_dep = func = lambda x: None
         nasti_file = NastiFile({
             "path": "tests/nastifiles/nastifile_default",

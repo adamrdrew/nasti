@@ -18,7 +18,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="NASTI",
-    version="0.2.4",
+    version="0.3.0",
     description="NASTI's A Strange Templating Implementation",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",

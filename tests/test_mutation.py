@@ -23,7 +23,7 @@ class TestMutation(unittest.TestCase):
         mutation_config = config["mutations"][0]
         mutation = Mutation(mutation_config, "tests/nastifiles/mutation_unmentioned_files")
         unmentioned_files = mutation.find_unmentioned_files("tests/nastifiles/mutation_unmentioned_files")
-        assert unmentioned_files == ['files/nested/unmentioned', 'files/unmentioned']
+        assert set(unmentioned_files) == set(['files/nested/unmentioned', 'files/unmentioned'])
 
     # this tests that the files array is not present
     def test_no_files(self):
@@ -92,11 +92,11 @@ class TestMutation(unittest.TestCase):
             config = yaml.safe_load(f)
         mutation_config = config["mutations"][0]
         mutation = Mutation(mutation_config, "tests/nastifiles/mutation_text_replacement_fails", os, mocks.mock_failed_open, input_dep, print_dep)
-        with self.assertRaises(exceptions.MutationTextReplacementFailedException):
+        with self.assertRaises(exceptions.MutationTooManyInputTriesException):
             mutation.run()
 
     def test_run(self):
-        input_dep = func = lambda x: "bogus_slug"
+        input_dep = func = lambda x: "good-slug"
         print_dep = func = lambda x: None
         #create the text file we'll use to replace stuff in
         with open("tests/nastifiles/mutation_run/test.txt", "w") as f:
@@ -110,7 +110,7 @@ class TestMutation(unittest.TestCase):
         #open the file we replaced stuff in
         with open("tests/nastifiles/mutation_run/test.txt", "r") as f:
             file_contents = f.read()
-        assert file_contents == "just bogus_slug please"
+        assert file_contents == "just good-slug please"
         #delete the file we replaced stuff in
         os.remove("tests/nastifiles/mutation_run/test.txt")
 

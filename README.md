@@ -1,11 +1,10 @@
 [![Build Status](https://github.com/adamrdrew/nasti/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/adamrdrew/nasti/actions)
 [![codecov](https://codecov.io/gh/adamrdrew/nasti/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/adamrdrew/nasti?branch=master)
 
- <center><img src="logo.png"></center>
+ <center><img src="images/logo.png"></center>
 
 # NASTI
 NASTI is A Strange Templating Implementation.
-
 
 NASTI allows you to create project templates, similar to tools like [Cookiecutter](https://github.com/cookiecutter/cookiecutter). What makes NASTI unique is that your project templates remain as valid, living code. You can run, test, and debug your project templates just like any other application while still enabling end users to bootstrap new projects from your template.
 
@@ -15,11 +14,12 @@ NASTI allows you to create project templates, similar to tools like [Cookiecutte
 * Works with any language
 * Tightly scoped single-file template definition
 * Powerful template and project validation system
+* Rich text markup including colors, styles, and emoji
 * Super easy, barely an inconvenience
 
 ## Installation
 ```sh
-$ pip install NASTI
+$ pip install nasti
 ```
 
 ## Usage
@@ -209,6 +209,39 @@ globals:
 The example above will run `before_nasti.sh` before running the globals and mutations, run `after_nasti.sh` after running the globals and mutations, and then delete those scripts.
 
 The value of the script field must be an executable script that can be run with sh.
+
+### Rich Text Templates
+Nasti can produce rich text output including colors, styles, emojis and more anywhere you specify text in your template, such as prompts, globals, or the greeting message. This functionality is provided by the awesome [Rich](https://github.com/Textualize/rich) library for Python.
+
+Example:
+```
+---
+greeting: >
+
+  :waving_hand: [bold blue]Welcome to the ConsoleDot Go Starter App generator![/bold blue]
+
+
+  :stop_sign: [bold blue]Before generating your app please do the following:[/bold blue]
+    [green]:heavy_check_mark:[/green] Ensure you have access to the ephemeral cluster
+    [green]:heavy_check_mark:[/green] Create a new Quay repo for your app
+    [green]:heavy_check_mark:[/green] Create a new GitHub repo for your app
+
+  :book: [bold blue]Documentation:[/bold blue]
+    :link: [link=https://ourdocs.com/ephemeral][blue]Ephemeral Cluster Access[/blue][/link]
+    :link: [link=https://gitlab.internal.com./repo[blue]Create Quay Repo in App Interface[/blue][/link]
+
+globals:
+  - name: "app_name"
+    prompt: ":computer: [green]App Name[/green]"
+    help: "[gray][italic]Alpha-numeric. Spaces. No special characters. Example: My Great App[/italic][/gray]"
+    validation:
+      regex: ^[A-Za-z0-9 ]+$
+```
+
+Produces output that looks like this:
+![Rich text example](images/rich_text.png)
+
+Nasti supports any markup that the `rich.print` function accepts, so check out [their docs](https://rich.readthedocs.io/en/latest/markup.html) for a full description of what's possible
 
 ## Development
 

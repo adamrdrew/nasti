@@ -142,7 +142,7 @@ class TestHooks(unittest.TestCase):
         # Create a copy of the success script called after
         os.system("cp tests/hooks/success.sh tests/hooks/after_script.sh")
 
-        input_dep = func = lambda x: "input_from_user"
+        input_dep = func = lambda x: "input-from-user"
         print_dep = func = lambda x: None
         nasti_file = NastiFile({
             "path": "tests/hooks",
