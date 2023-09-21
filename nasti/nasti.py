@@ -30,7 +30,7 @@ class Nasti:
             self.__git_init()
         except Exception as e:
             self.handler.clean_up()
-            self.__delete_output_dir()
+            self.delete_output_dir()
             # Print a pretty error
             self.print_dep(f"An error ocurred processing the template: ")
             raise e
@@ -65,7 +65,7 @@ class Nasti:
                 if attemps >= max_attempts:
                     raise Exception("Error: Something really weird is up. ")
 
-    def __delete_output_dir(self):
+    def delete_output_dir(self):
         self.os_dep.system(f"rm -rf {self.output_dir}")
 
     def __copy_source_files(self):
