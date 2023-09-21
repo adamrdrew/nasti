@@ -35,9 +35,11 @@ def process(source, git):
     except KeyboardInterrupt:
         # Check if the output directory exists
         if nasti.output_dir:
-            print("Deleting output directory...")
+            rich.print("")
+            rich.print("[red]:stop_sign:[bold] Keyboard interrupt detected.[/bold][red]")
+            rich.print("[gray][italic]   Deleting output directory...[/italic][/gray]")
             nasti.delete_output_dir()
-            print("Exiting.")
+            rich.print("[gray][italic]   Exiting.[gray][italic]")
 
 @click.command()
 @click.argument("path", required=False)
