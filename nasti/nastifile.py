@@ -119,7 +119,7 @@ class NastiFile:
                 raise exceptions.NastiFileInvalidYamlException(f"Error: Unable to load {self.path}.")
 
     def run_greeting(self):
-        if self.GREETING_KEY in self.config:
+        if self.GREETING_KEY in self.config and not self.silent_mode:
             self.print_dep(self.config[self.GREETING_KEY])
 
     def run_mutations(self):
