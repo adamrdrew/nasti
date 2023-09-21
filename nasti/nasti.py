@@ -80,6 +80,7 @@ class Nasti:
             "os_dep": self.os_dep,
             "open_dep": self.open_dep,
             "print_dep": self.print_dep,
+            "input_dep": self.input_dep,
         })
         self.nasti_file.load()
 
