@@ -69,6 +69,9 @@ class NastiFile:
         # Dependency injection
         self.os_dep = opts["os_dep"]
         self.open_dep = opts["open_dep"]
+        self.accept_defaults = False
+        if "accept_defaults" in opts:
+            self.accept_defaults = opts["accept_defaults"]
         # Null object pattern
         self.hooks = Hooks({})
         if "print_dep" in opts:
@@ -118,7 +121,7 @@ class NastiFile:
         for mutation_config in self.config[self.MUTATIONS_KEY]:
             self.print_dep("")
             mutation_config["globals"] = self.globals
-            mutation = Mutation(mutation_config, working_dir, os, open, self.input_dep, self.print_dep)
+            mutation = Mutation(mutation_config, working_dir, os, open, self.input_dep, self.print_dep, self.accept_defaults)
             mutation.run()
 
     def run_globals(self):

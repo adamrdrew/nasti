@@ -17,6 +17,9 @@ class Nasti:
         self.print_dep = opts["print_dep"]
         self.output_dir = opts["output_dir"]
         self.git_init = opts["git_init"]
+        self.accept_defaults = False
+        if "accept_defaults" in opts:
+            self.accept_defaults = opts["accept_defaults"]
 
     def run(self):
         try:
@@ -83,6 +86,7 @@ class Nasti:
             "open_dep": self.open_dep,
             "print_dep": self.print_dep,
             "input_dep": self.input_dep,
+            "accept_defaults": self.accept_defaults,
         })
         self.nasti_file.load()
 
