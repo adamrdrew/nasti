@@ -8,6 +8,13 @@ import rich
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import InMemoryHistory
 
+def remove_silent_opt_outer_quotes(s):
+    if len(s) < 2:  # If the string length is less than 2, just return the original string
+        return s
+    if (s[0] == "'" and s[-1] == "'") or (s[0] == '"' and s[-1] == '"'):
+        return s[1:-1]
+    return s
+
 def parse_silent_opts(silent_str):
     silent_dict = {}
     pairs = silent_str.split(',')
@@ -21,7 +28,7 @@ def parse_silent_opts(silent_str):
         if not key or not value:
             raise ValueError(f"{pair}. Neither key nor value can be empty.")
 
-        silent_dict[key] = value
+        silent_dict[key] = remove_silent_opt_outer_quotes(value)
 
     return silent_dict
 

@@ -66,7 +66,8 @@ class Nasti:
             try:
                 # Attempt to create the directory
                 self.os_dep.makedirs(self.output_dir)
-                self.print_dep(f"Directory '{self.output_dir}' created successfully.")
+                if not self.silent_mode:
+                    self.print_dep(f"Directory '{self.output_dir}' created successfully.")
                 break
             except OSError as e:
                 # Handle error if directory creation fails

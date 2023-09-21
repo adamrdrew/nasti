@@ -125,7 +125,6 @@ class NastiFile:
     def run_mutations(self):
         working_dir = self.get_dir()
         for mutation_config in self.config[self.MUTATIONS_KEY]:
-            self.print_dep("")
             mutation_config["globals"] = self.globals
             mutation = Mutation(mutation_config, working_dir, os, open, self.input_dep, self.print_dep, self.accept_defaults, self.silent_mode, self.silent_opts)
             mutation.run()

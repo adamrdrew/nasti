@@ -178,17 +178,23 @@ class Mutation:
             raise exceptions.MutationTextReplacementFailedException(f"Error: Unable to replace text in files: {e}")
 
     def __run_silent(self):
+        # if there is no default and no silent opts, raise an exception
+        if not self.default and not self.name in self.silent_opts:
+            raise exceptions.MutationSilentModeException(f"Silent mode enabled but no default value or silent opts found for mutation: {self.name}")
         # If there is a default value, use it
         if self.default:
-            self.__replace_text_in_files(self.render_default_template())
-            return
-        # If there is no default value, use the silent opts
+            new_value = self.render_default_template()
+        # If there is no default value, use the value from silent opts
         if self.silent_opts and self.name in self.silent_opts:
-            self.__replace_text_in_files(self.silent_opts[self.name])
-            return
-        # If there is no default value and no silent opts, raise an exception
-        raise exceptions.MutationSilentModeException(f"Error: Silent mode enabled but no default value or silent opts found for mutation: {self.name}")
-
+            new_value = self.silent_opts[self.name]
+        # Validate the new value
+        if not self.__is_input_valid(new_value):
+            raise exceptions.MutationSilentModeException(f"Invalid value found for mutation: {self.name}")
+        try:
+            self.__replace_text_in_files(new_value)
+        except Exception as e:
+            raise exceptions.MutationTextReplacementFailedException(f"Error: Unable to replace text in files: {e}")
+        
     def __get_user_input(self):
         tries = 0
         max_tries = 3
