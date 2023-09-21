@@ -8,6 +8,23 @@ import rich
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import InMemoryHistory
 
+def parse_silent_opts(silent_str):
+    silent_dict = {}
+    pairs = silent_str.split(',')
+
+    for pair in pairs:
+        if '=' not in pair:
+            raise ValueError(f"{pair}. Expected format: key=value.")
+
+        key, value = pair.split('=')
+
+        if not key or not value:
+            raise ValueError(f"{pair}. Neither key nor value can be empty.")
+
+        silent_dict[key] = value
+
+    return silent_dict
+
 @click.group()
 def cli():
     """
@@ -22,7 +39,18 @@ def cli():
 @click.argument("dest_dir", required=False)
 @click.option("--git", "-g", help="Create a git repo in the new project. Default is True.", is_flag=True, default=True )
 @click.option("--defaults", "-d", help="Accept all defaults. Default is False", is_flag=True, default=False )
-def process(source, git, defaults, dest_dir):
+@click.option("--silent", "-s", help="Silent mode with key=value pairs separated by commas.")
+def process(source, git, defaults, dest_dir, silent):
+    # Convert silent string to a dictionary
+    silent_opts = {}
+    if silent:
+        try:
+            silent_opts = parse_silent_opts(silent)
+        except ValueError as e:
+            rich.print("[red]:stop_sign:[bold] Error processing silent mode key/value pairs[/bold][red]")
+            rich.print(e)
+            return
+
     try:
         history = InMemoryHistory()
         session = PromptSession(history=history)
@@ -36,6 +64,7 @@ def process(source, git, defaults, dest_dir):
             "input_dep": session.prompt,
             "accept_defaults": defaults,
             "output_dir": dest_dir,
+            "silent_opts": silent_opts,
         })
         nasti.run()
     except Exception as e:
