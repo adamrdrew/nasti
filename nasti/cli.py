@@ -69,6 +69,7 @@ def validate(path):
 @click.command()
 @click.argument("path", required=False)
 def find(path):
+    rich.print("[blue]Searching for files that match mutations but aren't mentioned in Nastifile...[/blue]")
     if not path:
         path = "."
     try:
@@ -79,9 +80,9 @@ def find(path):
             "open_dep": open,
         })
         unmentioned_files = nasti_file.find_unmentioned_files()
-        click.echo(unmentioned_files.get_report())
+        rich.print(unmentioned_files.get_report())
     except Exception as e:
-        print(e)
+        rich.print(e)
 
 cli.add_command(process)
 cli.add_command(validate)
