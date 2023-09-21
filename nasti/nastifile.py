@@ -127,28 +127,16 @@ class NastiFile:
         for mutation_config in self.config[self.MUTATIONS_KEY]:
             self.print_dep("")
             mutation_config["globals"] = self.globals
-            mutation = Mutation(mutation_config, working_dir, os, open, self.input_dep, self.print_dep, self.accept_defaults)
+            mutation = Mutation(mutation_config, working_dir, os, open, self.input_dep, self.print_dep, self.accept_defaults, self.silent_mode, self.silent_opts)
             mutation.run()
 
     def run_globals(self):
         if self.GLOBALS_KEY in self.config:
             for global_config in self.config[self.GLOBALS_KEY]:
-                if self.silent_mode:
-                    self.__run_silent_global(global_config)
-                else:
-                    self.__run_global(global_config)
+                global_obj = Global(global_config, self.input_dep, self.print_dep, self.silent_mode, self.silent_opts)
+                global_obj.populate()
+                self.globals[global_obj.get_name()] = global_obj.get_value()
 
-    def __run_global(self, global_config):
-        global_obj = Global(global_config, self.input_dep, self.print_dep)
-        global_obj.populate()
-        self.globals[global_obj.get_name()] = global_obj.get_value()
-    
-    def __run_silent_global(self, global_config):
-        if global_config["name"] in self.silent_opts:
-            self.globals[global_config["name"]] = self.silent_opts[global_config["name"]]
-        else:
-            raise exceptions.NastiFileGlobalNotFoundException(f"Error: Global {global_config['name']} not found.")
-    
     def get_global(self, name):
         if name in self.globals:
             return self.globals[name]

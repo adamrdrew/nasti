@@ -25,13 +25,15 @@ class Mutation:
     DEFAULT_KEY = "default"
     GLOBALS_KEY = "globals"
 
-    def __init__(self, mutation_config: dict, path, os_dep=os, open_dep=open, input_dep=input, print_dep=print, accept_defaults=False):
+    def __init__(self, mutation_config: dict, path, os_dep=os, open_dep=open, input_dep=input, print_dep=print, accept_defaults=False, silent_mode=False, silent_opts={}):
         # Dependency injection
         self.os_dep = os_dep
         self.open_dep = open_dep
         self.input_dep = input_dep
         self.print_dep = print_dep
         self.accept_defaults = accept_defaults
+        self.silent_mode = silent_mode
+        self.silent_opts = silent_opts
         # Required fields
         try:
             self.name        = mutation_config[self.NAME_KEY]
@@ -153,6 +155,10 @@ class Mutation:
         
 
     def run(self):
+        # Handle silent mode
+        if self.silent_mode:
+            self.__run_silent()
+            return
         # Handle accept defaults
         if self.accept_defaults and self.default:
             self.print_dep(f"[green]:heavy_check_mark:[/green] Using [green]{self.render_default_template()}[/green] for [blue]{self.name}[/blue] ")
@@ -170,6 +176,18 @@ class Mutation:
             self.__replace_text_in_files(user_input)
         except Exception as e:
             raise exceptions.MutationTextReplacementFailedException(f"Error: Unable to replace text in files: {e}")
+
+    def __run_silent(self):
+        # If there is a default value, use it
+        if self.default:
+            self.__replace_text_in_files(self.render_default_template())
+            return
+        # If there is no default value, use the silent opts
+        if self.silent_opts and self.name in self.silent_opts:
+            self.__replace_text_in_files(self.silent_opts[self.name])
+            return
+        # If there is no default value and no silent opts, raise an exception
+        raise exceptions.MutationSilentModeException(f"Error: Silent mode enabled but no default value or silent opts found for mutation: {self.name}")
 
     def __get_user_input(self):
         tries = 0

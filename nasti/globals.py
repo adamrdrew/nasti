@@ -13,10 +13,12 @@ class Global:
     help = None
     validation = None
 
-    def __init__(self, opts: dict, input_dep, print_dep):
+    def __init__(self, opts: dict, input_dep, print_dep, silent_mode=False, silent_opts={}):
         # Dependency injection
         self.input_dep = input_dep
         self.print_dep = print_dep
+        self. silent_mode = silent_mode
+        self.silent_opts = silent_opts
         # Required fields
         try:
             self.name        = opts[self.NAME_KEY]
@@ -41,10 +43,16 @@ class Global:
         tries = 0
         max_tries = 3
         while True:
-            self.print_dep(f"{self.prompt}")
-            if self.help:
-                self.print_dep(self.help)
-            self.value = self.input_dep("> ")
+            if self.silent_mode:
+                if self.name in self.silent_opts:
+                    self.value = self.silent_opts[self.name]
+                else:
+                    raise exceptions.GlobalSilentModeException(f"Error: Silent mode enabled but no value found for global {self.name}")
+            else:
+                self.print_dep(f"{self.prompt}")
+                if self.help:
+                    self.print_dep(self.help)
+                self.value = self.input_dep("> ")
             if self.validate():
                 break
             tries += 1
