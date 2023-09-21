@@ -133,10 +133,21 @@ class NastiFile:
     def run_globals(self):
         if self.GLOBALS_KEY in self.config:
             for global_config in self.config[self.GLOBALS_KEY]:
-                self.print_dep("")
-                global_obj = Global(global_config, self.input_dep, self.print_dep)
-                global_obj.populate()
-                self.globals[global_obj.get_name()] = global_obj.get_value()
+                if self.silent_mode:
+                    self.__run_silent_global(global_config)
+                else:
+                    self.__run_global(global_config)
+
+    def __run_global(self, global_config):
+        global_obj = Global(global_config, self.input_dep, self.print_dep)
+        global_obj.populate()
+        self.globals[global_obj.get_name()] = global_obj.get_value()
+    
+    def __run_silent_global(self, global_config):
+        if global_config["name"] in self.silent_opts:
+            self.globals[global_config["name"]] = self.silent_opts[global_config["name"]]
+        else:
+            raise exceptions.NastiFileGlobalNotFoundException(f"Error: Global {global_config['name']} not found.")
     
     def get_global(self, name):
         if name in self.globals:
