@@ -82,6 +82,12 @@ class NastiFile:
             self.input_dep = opts["input_dep"]
         else:
             self.input_dep = input
+        self.silent_opts = {}
+        self.silent_mode = False
+        if "silent_opts" in opts:
+            self.silent_opts = opts["silent_opts"]
+        if "silent_mode" in opts:
+            self.silent_mode = opts["silent_mode"]
         self.working_dir = opts["path"]
         self.__set_path(opts["path"])
         
@@ -113,25 +119,23 @@ class NastiFile:
                 raise exceptions.NastiFileInvalidYamlException(f"Error: Unable to load {self.path}.")
 
     def run_greeting(self):
-        if self.GREETING_KEY in self.config:
+        if self.GREETING_KEY in self.config and not self.silent_mode:
             self.print_dep(self.config[self.GREETING_KEY])
 
     def run_mutations(self):
         working_dir = self.get_dir()
         for mutation_config in self.config[self.MUTATIONS_KEY]:
-            self.print_dep("")
             mutation_config["globals"] = self.globals
-            mutation = Mutation(mutation_config, working_dir, os, open, self.input_dep, self.print_dep, self.accept_defaults)
+            mutation = Mutation(mutation_config, working_dir, os, open, self.input_dep, self.print_dep, self.accept_defaults, self.silent_mode, self.silent_opts)
             mutation.run()
 
     def run_globals(self):
         if self.GLOBALS_KEY in self.config:
             for global_config in self.config[self.GLOBALS_KEY]:
-                self.print_dep("")
-                global_obj = Global(global_config, self.input_dep, self.print_dep)
+                global_obj = Global(global_config, self.input_dep, self.print_dep, self.silent_mode, self.silent_opts)
                 global_obj.populate()
                 self.globals[global_obj.get_name()] = global_obj.get_value()
-    
+
     def get_global(self, name):
         if name in self.globals:
             return self.globals[name]

@@ -4,7 +4,7 @@
  <center><img src="images/logo.png"></center>
 
 # NASTI
-NASTI is A Strange Templating Implementation.
+NASTI's A Strange Templating Implementation.
 
 NASTI allows you to create project templates, similar to tools like [Cookiecutter](https://github.com/cookiecutter/cookiecutter). What makes NASTI unique is that your project templates remain as valid, living code. You can run, test, and debug your project templates just like any other application while still enabling end users to bootstrap new projects from your template.
 
@@ -15,6 +15,7 @@ NASTI allows you to create project templates, similar to tools like [Cookiecutte
 * Tightly scoped single-file template definition
 * Powerful template and project validation system
 * Rich text markup including colors, styles, and emoji
+* Interactive and silent modes
 * Super easy, barely an inconvenience
 
 ## Installation
@@ -28,11 +29,17 @@ $ pip install nasti
 # Process a template on github
 $ nasti process git@github.com:somedev/some-template.git
 # Or gitlab, or any other git repo you can clone
-$ nasti process git@gitlab.mycomand.com:someorg/some-template.git
+$ nasti process git@gitlab.mycompany.com:someorg/some-template.git
 # Process a local template
 $ nasti process ~/Development/some-template
-# Let NASTI greate your new project's repo
-$ nasti process --git ~/Development/some-template
+# Specify an output directory
+$ nasti process ~/Development/some-template great_new_app
+# Don't let NASTI greate your new project's repo
+$ nasti process --git false ~/Development/some-template
+# Accept all default values for mutations that have them
+$ nasti process -d ~/Development/some-template great_new_app
+# Silent mode
+$ nasti process -s "app_name='My Great App',contact_name='Adam Drew',api_path='my-api',contact_email='adam@email.net'" ~/Development/some-template great_new_app
 ```
 
 ## Template Creation
@@ -43,7 +50,7 @@ Simply add a nastifile called `nasti.yaml` to the root of your project and add s
 ```yaml
 ---
 mutations:
-    # Name is an ID used internally and will appear in error messages
+    # Identifies your promp internally, in error messages, and in silent mode
   - name: "github"
     # Prompt to present to the template user
     prompt: "Github Repo"
@@ -70,16 +77,18 @@ The mutation format is very simple, and you can add as many mutations as you'd l
 Next verify your nastifile:
 ```bash
 $ nasti validate
-Nastifile is valid
+✔ Nastifile is valid.
 ```
 
 If there's something wrong with your nastifile, such as a mutation being applied to a file that doesn't contain the replacement text, or an omitted field, `validate` will tell you:
 
 ```bash
 $ nasti validate
-Error: mutation email file: main.go at: /home/adamdrew/Development/someapp/main.go does not contain somedev@corpo.net 
+❌ Nastifile is invalid.
+Error: mutation email file: README.md at: /home/adamdrew/Development/someapp/README.md does not contain addrew@corpo.net 
 
-$ nasti validate 
+$ nasti validate
+❌ Nastifile is invalid. 
 Error: Invalid mutation config: {'name': 'quay', 'help': 'The quay repo is the location of your container image. Should be in the form of quay.io/username/repo', 'replace': 'quay.io/someorg/some-project', 'files': ['Makefile'], 'validations': ['^quay\\.io/[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$']} missing 'prompt'
 ```
 
@@ -90,10 +99,13 @@ Mutations are file-scoped, meaning they'll only replace text in files in the mut
 
 ```
 $ nasti find tests/nastifiles/mutation_unmentioned_files/
-The following mutations match files not listed in the nastifile:
+Searching for files that match mutations but aren't mentioned in Nastifile...
+
+❗ The following mutations match files not listed in the nastifile:
 
 Mutation example_mutation matches but does not reference:
-    files/nested/unmentioned    files/unmentioned
+    • files/nested/unmentioned
+    • files/unmentioned
 ```
 
 In the example above the nastifile has a mutation called `example_mutation` that would match the files `files/nested/unmentioned` and `files/unmentioned` but those files don't appear in the `example_mutation` file list.
@@ -162,7 +174,7 @@ mutations:
     prompt: "Example Mutation"
     help: "Help for an example mutation"
     replace: "example text to replace"
-    default: "{{ app_name.lower().split(' ') | join('_') }}"
+    default: "{{ app_name.lower().split(' ') | join('-') }}"
     files: []
     validation:
       kind: "slug"
@@ -242,6 +254,17 @@ Produces output that looks like this:
 ![Rich text example](images/rich_text.png)
 
 Nasti supports any markup that the `rich.print` function accepts, so check out [their docs](https://rich.readthedocs.io/en/latest/markup.html) for a full description of what's possible
+
+## Silent Mode
+Silent mode allows you to create a project from a template without having to use the interactive prompts. This makes silent mode suitable for integrating Nasti into other tools, such as GUI projects or template generation systems in things like Github.
+
+To invoke silent mode you use the `-s` switch on the command line and specify a the names and values for the prompts you want to populate:
+
+```bash
+$ nasti process -s "app_name='My Great App',contact_name='Adam Drew',api_path='my-api',contact_email='adam@email.net'" ~/Development/some-template great_new_app
+```
+
+You must specify names and values for all of the mutations and globals in the template that don't have defaults. Silent mode will use defaults for all mutations except those that you specify on the command line. In the example above we can image that `app_name` and `contact_name` are globals, and so need to be specified, but `api_path` has a default but we're overriding it. In that way silent mode operates like accept defaults mode but with overrides. Also, you must specify an output directory when using silent mode.
 
 ## Development
 

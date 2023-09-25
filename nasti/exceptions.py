@@ -61,6 +61,12 @@ class GlobalRequiredKeysMissingException(Exception):
 class GlobalTooManyInputTriesException(Exception):
     pass
 
+class GlobalSilentModeException(Exception):
+    pass
+
+class MutationSilentModeException(Exception):
+    pass
+
 class HooksScriptNotFound(Exception):
     pass
 class HooksScriptExecutionFailed(Exception):
