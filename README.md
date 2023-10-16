@@ -47,6 +47,15 @@ $ nasti process -f user_input.yaml my_new_app/
 $ nasti process -f user_input.json my_new_app/
 ```
 
+## Docker / Podman
+You can use nasti without installing it locally via podman / docker:
+
+```sh 
+$ podman pull quay.io/rh_ee_addrew/nasti:master
+$ podman run quay.io/rh_ee_addrew/nasti:master process git@github.com:somedev/some-template.git
+```
+
+
 ## Template Creation
 All you need to get started is a project you that want to be available as a template. It can be in any language, with any project layout. 
 
