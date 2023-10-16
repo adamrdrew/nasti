@@ -1,7 +1,8 @@
 import click
 import sys
 import os
-
+import json
+import yaml
 from nasti.nastifile import NastiFile
 from nasti.nasti import Nasti
 import rich
@@ -47,7 +48,8 @@ def cli():
 @click.option("--git", "-g", help="Create a git repo in the new project. Default is True.", is_flag=True, default=True )
 @click.option("--defaults", "-d", help="Accept all defaults. Default is False", is_flag=True, default=False )
 @click.option("--silent", "-s", help="Silent mode with key=value pairs separated by commas.")
-def process(source, git, defaults, dest_dir, silent):
+@click.option("--input-file", "-f", type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True), help="Input file in JSON or YAML format containing key=value pairs.")
+def process(source, git, defaults, dest_dir, silent, input_file):
     # Convert silent string to a dictionary
     silent_mode = False
     silent_opts = {}
@@ -61,6 +63,34 @@ def process(source, git, defaults, dest_dir, silent):
             rich.print("[red]:stop_sign:[bold] Error processing silent mode key/value pairs[/bold][red]")
             rich.print(e)
             return
+
+    if input_file:
+        _, ext = os.path.splitext(input_file)
+        try:
+            with open(input_file, 'r') as f:
+                if ext in ['.yaml', '.yml']:
+                    silent_opts = yaml.safe_load(f)
+                elif ext == '.json':
+                    silent_opts = json.load(f)
+                else:
+                    print(f"[red]:stop_sign:[bold] Unsupported file format {ext}. Only .json and .yaml are supported.[/bold][red]")
+                    return
+        except yaml.YAMLError:
+            print("[red]:stop_sign:[bold] Error parsing the YAML file.[/bold][red]")
+            return
+        except json.JSONDecodeError:
+            print("[red]:stop_sign:[bold] Error parsing the JSON file.[/bold][red]")
+            return
+        except Exception as e:
+            print(f"[red]:stop_sign:[bold] Error reading the file: {e}[/bold][red]")
+            return
+
+        if not silent_opts or not all(isinstance(key, str) and isinstance(val, str) for key, val in silent_opts.items()):
+            print("[red]:stop_sign:[bold] Error in file content. Expected simple key=value pairs of strings.[/bold][red]")
+            return
+
+        silent_mode = True
+
 
     try:
         history = InMemoryHistory()
