@@ -16,6 +16,7 @@ NASTI allows you to create project templates, similar to tools like [Cookiecutte
 * Powerful template and project validation system
 * Rich text markup including colors, styles, and emoji
 * Interactive and silent modes
+* Silent mode accepts input on the command line or from JSON or YAML files
 * Super easy, barely an inconvenience
 
 ## Installation
@@ -38,8 +39,12 @@ $ nasti process ~/Development/some-template great_new_app
 $ nasti process --git false ~/Development/some-template
 # Accept all default values for mutations that have them
 $ nasti process -d ~/Development/some-template great_new_app
-# Silent mode
-$ nasti process -s "app_name='My Great App',contact_name='Adam Drew',api_path='my-api',contact_email='adam@email.net'" ~/Development/some-template great_new_app
+# Silent mode with input provided on the command line
+$ nasti process -s "app_name='My Great App',contact_name='Adam Drew',api_path='my-api',contact_email='adam@email.net'" ~/Development/some-template great_new_app 
+# Silent mode with input provided from a YAML file
+$ nasti process -f user_input.yaml my_new_app/ 
+# Silent mode with input provided by a JSON file
+$ nasti process -f user_input.json my_new_app/
 ```
 
 ## Template Creation
