@@ -50,7 +50,7 @@ def cli():
 @click.option("--silent", "-s", help="Silent mode with key=value pairs separated by commas.")
 @click.option("--input-file", "-f", type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True), help="Input file in JSON or YAML format containing key=value pairs.")
 def process(source, git, defaults, dest_dir, silent, input_file):
-    # Convert silent string to a dictionary
+    # When in silent mode we don't prompt the user for input
     silent_mode = False
     silent_opts = {}
     if silent:
